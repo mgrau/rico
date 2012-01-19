@@ -1,0 +1,4 @@
+-Separate classes.py into Player.py etc. 
+-Create a class for game
+-Create class for turn roles (Builder, etc)
+-Create unit tests

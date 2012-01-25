@@ -6,12 +6,7 @@ class Player:
 	def __init__(self,index=0,name=""):
 		self.name = name
 		self.index = index
-		self.coins = 0
-		self.points = 0
-		self.goods = [0, 0, 0, 0, 0]
-		self.plantations = []
-		self.buildings = []
-		self.san_juan = 0;
+		self.reset()
 		
 	def __repr__(self):
 		return  "\n"+self.name+"\n"+\
@@ -19,6 +14,14 @@ class Player:
 				"points: "+str(self.points)+"\n"+\
 				"plantations: "+str(self.plantations)+"\n"+\
 				"buildings: "+str(self.buildings)
+	
+	def reset(self):
+		self.coins = 0
+		self.points = 0
+		self.goods = []
+		self.plantations = []
+		self.buildings = []
+		self.san_juan = 0;
     
 	def choose_role(self,game):
 		print "\n"+self.name+"'s Turn"
@@ -30,16 +33,16 @@ class Player:
 			choice = raw_input("choice? ")
   		return int(choice)
   		
-  	def settler(self,game,index):
+  	def settler(self,game):
   		print "\n"+self.name+" choose a plantation"
-  		if self.index==index or self.use_building(ConstructionHut):
+  		if self.index==game.current_player or self.use_building(ConstructionHut):
   			for i,plantation in enumerate(game.plantations+[Quarry()]):
 	  			print str(i)+": "+str(plantation)
   		else: 
 	  		for i,plantation in enumerate(game.plantations):
 	  			print str(i)+": "+str(plantation)
 	  	choice = []
-  		if self.index==index or self.use_building(ConstructionHut):
+  		if self.index==game.current_player or self.use_building(ConstructionHut):
 	  		while choice not in [str(i) for i in range(len(game.plantations)+1)]:
 				choice = raw_input("choice? ")
   		else:
@@ -47,8 +50,20 @@ class Player:
 				choice = raw_input("choice? ")
   		return int(choice)
   		
-  	def mayor(self,game,index):
+  	def mayor(self,game):
   		return
+
+  	def builder(self,game):
+  		return
+  		
+	def craftsman(self,game):
+  		return
+  		
+	def trader(self,game):
+  		return
+  		
+	def captain(self,game):
+  		return	
  
 	def get_plantation(self,plantation):
 		if len(self.plantations)<12:
@@ -84,6 +99,12 @@ class Player:
 			return self.buildings[[isinstance(building,Building) for building in self.buildings].index(True)].colonists > 0
 		else:
 			return False
+			
+	def city_full(self):
+		return False
+		
+	def island_full(self):
+		return False
 		
 	def colonists(self):
 		colonists = self.san_juan
@@ -92,10 +113,10 @@ class Player:
 		return colonists
 		
 	def open_plantations(self):
-		return sum([1*(plantation.colonists==0) for plantation in self.plantations])
+		return sum([(1-plantation.colonists) for plantation in self.plantations])
 		
 	def open_buildings(self):
-		return sum([1*(building.colonists==0) for building in self.buildings])
+		return sum([building.capacity-building.colonists for building in self.buildings])
 		
 	def open_spots(self):
 		return self.open_buildings() + self.open_plantations()

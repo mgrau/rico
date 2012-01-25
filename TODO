@@ -1,4 +1,9 @@
--Separate classes.py into Player.py etc. 
--Create a class for game
--Create class for turn roles (Builder, etc)
--Create unit tests
+-separate the game setup in a separate function, called at class init
+-separate out more logic from player class. leave only the helper functions to evaluate a player's stance
+-create a Human player class inherited from player
+-create a stupid AI class
+-create an interface class (text, SDL, etc)
+
+-craftsman (need to figure out how to handle barrels, array or object)
+-trader - trading house can be a list in game
+-captain (need class for ships)

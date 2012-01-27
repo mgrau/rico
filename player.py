@@ -1,5 +1,3 @@
-from plantations import *
-from buildings import *
 from game import *
 
 class Player:
@@ -11,9 +9,10 @@ class Player:
     def __repr__(self):
         return  "\n"+self.name+"\n"+\
                 "coins: "+str(self.coins)+"\n"+\
-                "points: "+str(self.points)+"\n"+\
+                "san juan: "+str(self.san_juan)+"\n"+\
                 "plantations: "+str(self.plantations)+"\n"+\
-                "buildings: "+str(self.buildings)
+                "buildings: "+str(self.buildings)+"\n"+\
+                "goods: "+str(self.goods)
 
     def reset(self):
         self.coins = 0
@@ -22,33 +21,13 @@ class Player:
         self.plantations = []
         self.buildings = []
         self.san_juan = 0
+        self.role = Role()
 
     def choose_role(self,game):
-        print "\n"+self.name+"'s Turn"
-        print "choose a role:"
-        for i,role in enumerate(game.roles):
-            print str(i)+": "+str(role)
-        choice = []
-        while choice not in [str(i) for i in range(len(game.roles))]:
-            choice = raw_input("choice? ")
-        return int(choice)
+        return
 
     def settler(self,game):
-        print "\n"+self.name+" choose a plantation"
-        if self.index==game.current_player or self.use_building(ConstructionHut):
-            for i,plantation in enumerate(game.plantations+[Quarry()]):
-                print str(i)+": "+str(plantation)
-        else:
-            for i,plantation in enumerate(game.plantations):
-                print str(i)+": "+str(plantation)
-        choice = []
-        if self.index==game.current_player or self.use_building(ConstructionHut):
-            while choice not in [str(i) for i in range(len(game.plantations)+1)]:
-                choice = raw_input("choice? ")
-        else:
-            while choice not in [str(i) for i in range(len(game.plantations))]:
-                choice = raw_input("choice? ")
-        return int(choice)
+        return
 
     def mayor(self,game):
         return
@@ -65,28 +44,15 @@ class Player:
     def captain(self,game):
         return
 
-    def get_plantation(self,plantation):
-        if len(self.plantations)<12:
-            self.plantations.append(plantation)
-        if self.use_building(Hospice):
-            self.plantations[-1].colonists=1
+    def discount(self,building=Building()):
+        discount = sum([plantation.colonists*isinstance(plantation,Quarry) for plantation in self.plantations])
+        discount = min(discount,building.points) # you can't use more quarries than points the building is worth
+        if isinstance(self.role,Builder):
+            discount+=1
+        return discount
 
-    def get_building(self,building_type=Building):
-        self.buildings.append(building_type())
-
-    def afford_building(self,building_type=Building):
-        b = building_type()
-        return self.coins >= b.cost
-
-    def buy_building(self,building_type=Building):
-        if not(self.have_building(building_type)):
-            if self.afford_building(building_type):
-                self.get_building(building_type)
-                self.coins -= self.buildings[-1].cost
-                if self.use_building(University):
-                    self.buildings[-1].colonists=1
-                return True
-        return False
+    def afford_building(self,building=Building()):
+        return self.coins >= (building.cost-self.discount(building))
 
     def have_plantation(self,plantation_type=Plantation):
         return any([isinstance(plantation,plantation_type) for plantation in self.plantations])
@@ -96,15 +62,29 @@ class Player:
 
     def use_building(self,building_type=Building):
         if self.have_building(building_type):
-            return self.buildings[[isinstance(building,Building) for building in self.buildings].index(True)].colonists > 0
+            return self.buildings[[isinstance(building,Building) for building in self.buildings].index(True)].colonists
         else:
             return False
 
+    def produce_goods(self):
+        num_corn = sum([plantation.colonists*isinstance(plantation,Corn) for plantation in self.plantations])
+        num_indigo = sum([plantation.colonists*isinstance(plantation,Indigo) for plantation in self.plantations])
+        num_sugar = sum([plantation.colonists*isinstance(plantation,Sugar) for plantation in self.plantations])
+        num_tobacco = sum([plantation.colonists*isinstance(plantation,Tobacco) for plantation in self.plantations])
+        num_coffee = sum([plantation.colonists*isinstance(plantation,Coffee) for plantation in self.plantations])
+
+        num_indigo = min(num_indigo,self.use_building(SmallIndigoPlant)+self.use_building(IndigoPlant))
+        num_sugar = min(num_sugar,self.use_building(SmallSugarMill)+self.use_building(SugarMill))
+        num_tobacco = min(num_tobacco,self.use_building(TobaccoStorage))
+        num_coffee = min(num_coffee,self.use_building(CoffeeRoaster))
+
+        return num_corn*[CornBarrel()]+num_indigo*[IndigoBarrel()]+num_sugar*[SugarBarrel()]+num_tobacco*[TobaccoBarrel()]+num_coffee*[CoffeeBarrel()]
+
     def city_full(self):
-        return False
+        return sum([building.size for building in self.buildings]) >= 12
 
     def island_full(self):
-        return False
+        return len(self.plantations) >= 12
 
     def colonists(self):
         colonists = self.san_juan
@@ -116,7 +96,7 @@ class Player:
         return sum([(1-plantation.colonists) for plantation in self.plantations])
 
     def open_buildings(self):
-        return sum([building.capacity-building.colonists for building in self.buildings])
+        return sum([(building.capacity-building.colonists) for building in self.buildings])
 
     def open_spots(self):
         return self.open_buildings() + self.open_plantations()

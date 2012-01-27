@@ -1,9 +1,8 @@
-import game
-from player import Player
+from human_player import *
 
-test = game.Game()
-test.players.append(Player(0,"Matt"))
-test.players.append(Player(1,"Amy"))
-test.players.append(Player(2,"Dan"))
+test = Game()
+test.players.append(Human_Player(0,"Matt"))
+test.players.append(Human_Player(1,"Amy"))
+test.players.append(Human_Player(2,"Dan"))
 test.setup()
 test.do_round()

@@ -172,7 +172,7 @@ class Game:
         self.buildings.append(CustomsHouse())
         self.buildings.append(CityHall())
 
-    def do_round(self):
+    def round(self):
         # iterate through all players, beginning with the governor
         for player in self.players[self.governor:]+self.players[:self.governor]:
             self.current_player = player.index

@@ -2,6 +2,8 @@
 -Captain (and harbor, wharf and warehouses)
 -Factory
 -Endgame
+-there is a bug with mayor in human_player where the interface allows the colonists on a plantation to go negative
+-there is a bug in crafting - does not check if you have the production buildings
 
 -better text interface
 -Kivy interface

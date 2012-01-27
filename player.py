@@ -24,14 +24,7 @@ class Player:
         self.san_juan = 0
 
     def choose_role(self,game):
-        print "\n"+self.name+"'s Turn"
-        print "choose a role:"
-        for i,role in enumerate(game.roles):
-            print str(i)+": "+str(role)
-        choice = []
-        while choice not in [str(i) for i in range(len(game.roles))]:
-            choice = raw_input("choice? ")
-        return int(choice)
+        return game.UI.choose_role(game, self)
 
     def settler(self,game):
         print "\n"+self.name+" choose a plantation"

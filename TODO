@@ -1,9 +1,13 @@
--separate the game setup in a separate function, called at class init
--separate out more logic from player class. leave only the helper functions to evaluate a player's stance
--create a Human player class inherited from player
--create a stupid AI class
--create an interface class (text, SDL, etc)
+-testing on a larger scale
+-Captain (and harbor, wharf and warehouses)
+-Factory
+-Endgame
+-there is a bug with mayor in human_player where the interface allows the colonists on a plantation to go negative
+-there is a bug in crafting - does not check if you have the production buildings
 
--craftsman (need to figure out how to handle barrels, array or object)
--trader - trading house can be a list in game
--captain (need class for ships)
+-better text interface
+-Kivy interface
+
+-random AI incomplete
+-greedy AI
+-better heuristic AI

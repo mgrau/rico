@@ -102,7 +102,7 @@ class Trader(Role):
 		for player in game.players[game.current_player:] + game.players[:game.current_player]:
 			good = player.trader()
 			if good in player.goods:
-				if length(game.trading_house)<4:
+				if len(game.trading_house)<4:
 					if player.use_building(Office) or (good not in game.trading_house):
 							player.goods.remove(good)
 							game.trading_house.append(good)

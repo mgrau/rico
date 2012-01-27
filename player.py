@@ -24,7 +24,7 @@ class Player:
         self.role = Role()
 
     def choose_role(self,game):
-        return
+        return game.UI.choose_role(game, self)
 
     def settler(self,game):
         return

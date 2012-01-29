@@ -62,7 +62,7 @@ class Player:
 
     def use_building(self,building_type=Building):
         if self.have_building(building_type):
-            return self.buildings[[isinstance(building,Building) for building in self.buildings].index(True)].colonists
+            return self.buildings[[isinstance(building,building_type) for building in self.buildings].index(True)].colonists
         else:
             return False
 
@@ -78,7 +78,7 @@ class Player:
         num_tobacco = min(num_tobacco,self.use_building(TobaccoStorage))
         num_coffee = min(num_coffee,self.use_building(CoffeeRoaster))
 
-        return num_corn*[CornBarrel()]+num_indigo*[IndigoBarrel()]+num_sugar*[SugarBarrel()]+num_tobacco*[TobaccoBarrel()]+num_coffee*[CoffeeBarrel()]
+        return [CornBarrel() for i in range(num_corn)]+[IndigoBarrel() for i in range(num_indigo)]+[SugarBarrel() for i in range(num_sugar)]+[TobaccoBarrel() for i in range(num_tobacco)]+[CoffeeBarrel() for i in range(num_coffee)]
 
     def city_full(self):
         return sum([building.size for building in self.buildings]) >= 12

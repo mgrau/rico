@@ -1,4 +1,5 @@
 from buildings import *
+from barrels import *
 
 class Role:
     def __init__(self,name=""):
@@ -84,13 +85,24 @@ class Craftsman(Role):
     def __call__(self,game):
         for player in game.players[game.current_player:] + game.players[:game.current_player]:
             goods_wanted = player.produce_goods()
+            goods_obtained = []
             for good in goods_wanted:
                 if good in game.goods:
                     game.goods.remove(good)
-                    player.goods.append(good)
+                    goods_obtained.append(good)
+            if player.use_building(Factory):
+                unique_number = 0
+                for barrel in [CornBarrel(),IndigoBarrel(),SugarBarrel(),TobaccoBarrel(),CoffeeBarrel()]:
+                    if barrel in goods_obtained:
+                        unique_number += 1
+                if unique_number == 5:
+                    player.coins += 5
+                elif unique_number in [2,3,4]:
+                    player.coins += unique_number-1
+            player.goods.extend(goods_obtained)
         if len(game.players[game.current_player].goods)>0:
             good = game.players[game.current_player].craftsman(game)
-            if good in game.players[game.current_player].goods:
+            if good in game.players[game.current_player].goods and good in game.goods:
                 game.goods.remove(good)
                 game.players[game.current_player].goods.append(good)
 
@@ -116,6 +128,30 @@ class Captain(Role):
     def __init__(self):
         Role.__init__(self,name="Captain")
     def __call__(self,game):
+        i = game.current_player
+        if game.can_player_ship(game.players[i]):
+            game.players[i].points += 1
+            game.points -= 1
+        while game.can_anyone_ship():
+            player = game.players[i]
+            if game.can_player_ship(player):
+                valid_shipping_order = False
+                while not valid_shipping_order:
+                    (ship,good) = player.captain(game)
+                    if good in player.goods and ship.can_load(good):
+                        valid_shipping_order = True
+                        game.ship(ship,player,good)
+            i += 1
+            if i >= len(game.players):
+                i = 0
+        for ship in game.ships:
+            if ship.full():
+                game.goods += ship.goods
+                ship.goods = []
+        for player in game.players[game.current_player:] + game.players[:game.current_player]:
+            if len(player.goods) > 1:
+                game.goods += player.goods
+                player.goods = []
         return
 
 

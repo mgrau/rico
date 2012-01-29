@@ -8,3 +8,6 @@ game.setup()
 
 while not game.game_end():
     game.round()
+
+for player in game.players:
+    print player.name + ": "+str(player.points)+" points"

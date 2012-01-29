@@ -1,8 +1,9 @@
 from player import *
+import code
 
 class Human_Player(Player):
     def print_board(self,game):
-        print game.players
+        print game
 
     def choose_role(self,game):
         self.print_board(game)
@@ -13,6 +14,8 @@ class Human_Player(Player):
         choice = []
         while choice not in [str(i) for i in range(len(game.roles))]:
             choice = raw_input("choice? ")
+            if choice == 'debug':
+                code.interact(local=locals())
         return int(choice)
 
     def settler(self,game):
@@ -72,7 +75,7 @@ class Human_Player(Player):
                         if self.san_juan > 0:
                             self.buildings[choices[choice]].colonists += 1
                             self.san_juan -= 1
-                        else:
+                        elif self.buildings[choices[choice]].colonists > 0:
                             self.buildings[choices[choice]].colonists -= 1
                             self.san_juan += 1
         return
@@ -84,7 +87,7 @@ class Human_Player(Player):
         already_printed = []
         for i,building in enumerate(game.buildings):
             if self.afford_building(building) and (not self.have_building(building.__class__)) and (building.__class__ not in already_printed):
-                print str(len(choices))+": "+str(building)
+                print str(len(choices))+": "+building.name+"("+str(building.cost)+")"
                 choices.append(i)
                 already_printed.append(building.__class__)
         print str(len(choices))+": don't buy a building"
@@ -102,8 +105,10 @@ class Human_Player(Player):
             if (good not in choices) and (good in game.goods):
                 print str(len(choices))+": "+str(good)
                 choices.append(good)
-        choice = []
-        if len(choices)>0:
+        if len(choices)==1:
+            return choices[0]
+        elif len(choices):
+            choice = ''
             while choice not in [str(i) for i in range(len(choices))]:
                 choice = raw_input("choice? ")
             return choices[int(choice)]
@@ -115,10 +120,12 @@ class Human_Player(Player):
         self.print_board(game)
         print "\n"+self.name+", choose a good to trade"
         choices = []
-        for i,good in enumerate(self.goods):
-            if good not in choices:
+        for good in self.goods:
+            if good not in choices and (good not in game.trading_house or self.use_building(Office)):
                 print str(len(choices))+": "+str(good)
                 choices.append(good)
+        if not len(choices):
+            return Barrel()
         print str(len(choices))+": don't trade a good"
         choices.append(Barrel())
         choice = []
@@ -127,4 +134,17 @@ class Human_Player(Player):
         return choices[int(choice)]
 
     def captain(self,game):
-        return
+        self.print_board(game)
+        print "\n"+self.name+", choose a shipment"
+        choices = []
+        for ship in game.ships:
+            for good in self.goods:
+                if ship.can_load(good) and (ship,good) not in choices:
+                    print str(len(choices))+": ship "+str(good)+" on ship("+str(ship.capacity)+")"
+                    choices.append((ship,good))
+        if len(choices)==1:
+            return choices[0]
+        choice = ''
+        while choice not in [str(i) for i in range(len(choices))]:
+            choice = raw_input("choice? ")
+        return choices[int(choice)]

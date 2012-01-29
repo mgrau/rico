@@ -36,7 +36,12 @@ class Game:
             "turn: "+str(self.turn)+"\n"+\
             "points: "+str(self.points)+"\n"+\
             "colonists: "+str(self.colonists)+"\n"+\
+            "colonist ship: "+str(self.colonist_ship)+"\n"+\
             "governor: "+self.players[self.governor].name+"\n"+\
+            "current player: "+self.players[self.current_player].name+"\n"+\
+            "plantations: "+str(self.plantations)+"\n"+\
+            "trading house: "+str(self.trading_house)+"\n"+\
+            "ships: "+str(self.ships)+"\n"+\
             "players: "+str(self.players)
 
     def setup(self):
@@ -172,6 +177,28 @@ class Game:
         self.buildings.append(CustomsHouse())
         self.buildings.append(CityHall())
 
+    def can_anyone_ship(self):
+        return any([self.can_player_ship(player) for player in self.players])
+
+    def can_player_ship(self,player):
+        if len(player.goods):
+            for ship in self.ships:
+                if len(ship.goods) < ship.capacity:
+                    if not(len(ship.goods)):
+                        return True
+                    elif ship.goods[0] in player.goods:
+                        return True
+        return False
+
+    def ship(self,ship,player,good):
+        if ship.can_load(good) and good in player.goods and player.use_building(Harbor):
+            player.points += 1
+        while ship.can_load(good) and good in player.goods:
+            player.goods.remove(good)
+            ship.goods.append(good)
+            player.points += 1
+            self.points -= 1
+                
     def round(self):
         # iterate through all players, beginning with the governor
         for player in self.players[self.governor:]+self.players[:self.governor]:

@@ -5,6 +5,14 @@ class Human_Player(Player):
     def print_board(self,game):
         print game
 
+    def get_input(self,game,text="choice? "):
+        choice = raw_input(text)
+        if choice == 'debug':
+            code.interact(local=locals())
+        elif choice == 'game':
+            self.print_board(game)
+        return choice
+
     def choose_role(self,game):
         self.print_board(game)
         print "\n"+self.name+"'s Turn"
@@ -13,9 +21,7 @@ class Human_Player(Player):
             print str(i)+": "+str(role)
         choice = []
         while choice not in [str(i) for i in range(len(game.roles))]:
-            choice = raw_input("choice? ")
-            if choice == 'debug':
-                code.interact(local=locals())
+            choice = self.get_input(game,"choice? ")
         return int(choice)
 
     def settler(self,game):
@@ -30,10 +36,10 @@ class Human_Player(Player):
         choice = []
         if self.index==game.current_player or self.use_building(ConstructionHut):
             while choice not in [str(i) for i in range(len(game.plantations)+1)]:
-                choice = raw_input("choice? ")
+                choice = self.get_input(game,"choice? ")
         else:
             while choice not in [str(i) for i in range(len(game.plantations))]:
-                choice = raw_input("choice? ")
+                choice = self.get_input(game,"choice? ")
         return int(choice)
 
     def mayor(self,game):
@@ -53,7 +59,7 @@ class Human_Player(Player):
             print str(len(choices))+": Done"
             choices.append(-1)
             while choice not in [str(i) for i in range(len(choices))]:
-                choice = raw_input("choice? ")
+                choice = self.get_input(game,"choice? ")
             choice = int(choice)
             done = False
             if choices[choice] < 0:
@@ -94,7 +100,7 @@ class Human_Player(Player):
         choices.append(-1)
         choice = []
         while choice not in [str(i) for i in range(len(choices))]:
-            choice = raw_input("choice? ")
+            choice = self.get_input(game,"choice? ")
         return choices[int(choice)]
 
     def craftsman(self,game):
@@ -110,7 +116,7 @@ class Human_Player(Player):
         elif len(choices):
             choice = ''
             while choice not in [str(i) for i in range(len(choices))]:
-                choice = raw_input("choice? ")
+                choice = self.get_input(game,"choice? ")
             return choices[int(choice)]
         else:
             return Barrel()
@@ -130,7 +136,7 @@ class Human_Player(Player):
         choices.append(Barrel())
         choice = []
         while choice not in [str(i) for i in range(len(choices))]:
-            choice = raw_input("choice? ")
+            choice = self.get_input(game,"choice? ")
         return choices[int(choice)]
 
     def captain(self,game):
@@ -146,5 +152,5 @@ class Human_Player(Player):
             return choices[0]
         choice = ''
         while choice not in [str(i) for i in range(len(choices))]:
-            choice = raw_input("choice? ")
+            choice = self.get_input(game,"choice? ")
         return choices[int(choice)]

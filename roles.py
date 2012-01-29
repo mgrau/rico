@@ -109,7 +109,7 @@ class Craftsman(Role):
 
 class Trader(Role):
     def __init__(self):
-        Role.__init__(self,name="Trade")
+        Role.__init__(self,name="Trader")
     def __call__(self,game):
         for player in game.players[game.current_player:] + game.players[:game.current_player]:
             good = player.trader(game)

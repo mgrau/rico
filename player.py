@@ -100,3 +100,6 @@ class Player:
 
     def open_spots(self):
         return self.open_buildings() + self.open_plantations()
+
+    def total_points(self):
+        return self.points + sum([building.points for building in self.buildings]) # + prestige buildings

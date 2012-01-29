@@ -1,9 +1,15 @@
+-players shouldn't be able to ship same type of goods to multiple ships
+-wharf
+-warehouses
+-rotting correctly
+-heuristic colonist distribution function
+-build interface in human_player should display discounted price
+-increase access to debug
+-implement prestige buildings
+
+
+
 -testing on a larger scale
--Captain (and harbor, wharf and warehouses)
--Factory
--Endgame
--there is a bug with mayor in human_player where the interface allows the colonists on a plantation to go negative
--there is a bug in crafting - does not check if you have the production buildings
 
 -better text interface
 -Kivy interface

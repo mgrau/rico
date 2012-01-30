@@ -7,7 +7,7 @@ from random import shuffle
 class Game:
     def __init__(self):
         self.players = []
-
+        
         self.turn = 0
         self.current_player = 0
         self.governor = 0
@@ -182,8 +182,8 @@ class Game:
 
     def can_player_ship(self,player):
         if len(player.goods):
-            for ship in self.ships:
-                if len(ship.goods) < ship.capacity:
+            for ship in self.ships+[player.wharf]:
+                if not ship.full():
                     if not(len(ship.goods)):
                         return True
                     elif ship.goods[0] in player.goods:
@@ -225,6 +225,6 @@ class Game:
             player.role = Role() # fill player.role with the superclass (sort of like null?)
         self.roles.sort() # this is not strictly necessary, but matt likes to have them in order
         self.turn += 1 #increment turn
-
+    
     def game_end(self):
         return self.points < 0 or (self.colonists < 0) or any([player.city_full() for player in self.players])

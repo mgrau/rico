@@ -1,10 +1,7 @@
--players shouldn't be able to ship same type of goods to multiple ships
--wharf
 -warehouses
 -rotting correctly
 -heuristic colonist distribution function
 -build interface in human_player should display discounted price
--increase access to debug
 -implement prestige buildings
 
 

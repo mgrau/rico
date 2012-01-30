@@ -3,7 +3,10 @@ class Ship():
         self.capacity = capacity
         self.goods = []
     def __repr__(self):
-        return "\n"+str(self.capacity)+": "+str(self.goods)
+        if self.capacity >= 999:
+            return "\nwharf: "+str(self.goods)
+        else:
+            return "\n"+str(self.capacity)+": "+str(self.goods)
     def full(self):
         return len(self.goods)>=self.capacity
     def can_load(self,good):

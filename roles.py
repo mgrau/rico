@@ -134,11 +134,11 @@ class Captain(Role):
             game.points -= 1
         while game.can_anyone_ship():
             player = game.players[i]
-            if game.can_player_ship(player):
-                valid_shipping_order = False
-                while not valid_shipping_order:
-                    (ship,good) = player.captain(game)
-                    if good in player.goods and ship.can_load(good):
+            valid_shipping_order = False
+            while not valid_shipping_order and game.can_player_ship(player):
+                (ship,good) = player.captain(game)
+                if good in player.goods and ship.can_load(good) and not any([good in othership.goods for othership in filter(lambda x:x!=ship,game.ships)]):
+                    if not(ship==player.wharf and not player.use_building(Wharf)):
                         valid_shipping_order = True
                         game.ship(ship,player,good)
             i += 1
@@ -148,6 +148,10 @@ class Captain(Role):
             if ship.full():
                 game.goods += ship.goods
                 ship.goods = []
+        for wharf in [player.wharf for player in game.players]:
+                game.goods += wharf.goods
+                wharf.goods = []
+                wharf.capacity = 999
         for player in game.players[game.current_player:] + game.players[:game.current_player]:
             if len(player.goods) > 1:
                 game.goods += player.goods
@@ -158,6 +162,5 @@ class Captain(Role):
 class Prospector(Role):
     def __init__(self):
         Role.__init__(self,name="Prospector")
-
     def __call__(self,game):
         game.players[game.current_player].coins += 1

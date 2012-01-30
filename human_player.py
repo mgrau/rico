@@ -7,7 +7,7 @@ class Human_Player(Player):
 
     def get_input(self,game,text="choice? "):
         choice = raw_input(text)
-        if choice == 'debug':
+        if choice in ['debug','db']:
             code.interact(local=locals())
         elif choice == 'game':
             self.print_board(game)
@@ -21,7 +21,7 @@ class Human_Player(Player):
             print str(i)+": "+str(role)
         choice = []
         while choice not in [str(i) for i in range(len(game.roles))]:
-            choice = self.get_input(game,"choice? ")
+            choice = self.get_input(game)
         return int(choice)
 
     def settler(self,game):
@@ -36,10 +36,10 @@ class Human_Player(Player):
         choice = []
         if self.index==game.current_player or self.use_building(ConstructionHut):
             while choice not in [str(i) for i in range(len(game.plantations)+1)]:
-                choice = self.get_input(game,"choice? ")
+                choice = self.get_input(game)
         else:
             while choice not in [str(i) for i in range(len(game.plantations))]:
-                choice = self.get_input(game,"choice? ")
+                choice = self.get_input(game)
         return int(choice)
 
     def mayor(self,game):
@@ -59,7 +59,7 @@ class Human_Player(Player):
             print str(len(choices))+": Done"
             choices.append(-1)
             while choice not in [str(i) for i in range(len(choices))]:
-                choice = self.get_input(game,"choice? ")
+                choice = self.get_input(game)
             choice = int(choice)
             done = False
             if choices[choice] < 0:
@@ -100,7 +100,7 @@ class Human_Player(Player):
         choices.append(-1)
         choice = []
         while choice not in [str(i) for i in range(len(choices))]:
-            choice = self.get_input(game,"choice? ")
+            choice = self.get_input(game)
         return choices[int(choice)]
 
     def craftsman(self,game):
@@ -116,7 +116,7 @@ class Human_Player(Player):
         elif len(choices):
             choice = ''
             while choice not in [str(i) for i in range(len(choices))]:
-                choice = self.get_input(game,"choice? ")
+                choice = self.get_input(game)
             return choices[int(choice)]
         else:
             return Barrel()
@@ -136,7 +136,7 @@ class Human_Player(Player):
         choices.append(Barrel())
         choice = []
         while choice not in [str(i) for i in range(len(choices))]:
-            choice = self.get_input(game,"choice? ")
+            choice = self.get_input(game)
         return choices[int(choice)]
 
     def captain(self,game):
@@ -145,12 +145,24 @@ class Human_Player(Player):
         choices = []
         for ship in game.ships:
             for good in self.goods:
-                if ship.can_load(good) and (ship,good) not in choices:
+                if (ship,good) not in choices and ship.can_load(good) and not any([good in othership.goods for othership in filter(lambda x:x!=ship,game.ships)]):
                     print str(len(choices))+": ship "+str(good)+" on ship("+str(ship.capacity)+")"
                     choices.append((ship,good))
+        if self.use_building(Wharf) and not self.wharf.full():
+            for good in self.goods:
+                if (self.wharf,good) not in choices and self.wharf.can_load(good) and not any([good in othership.goods for othership in game.ships]):
+                    print str(len(choices))+": ship "+str(good)+" on wharf"
+                    choices.append((self.wharf,good))
+            print str(len(choices))+": do not use wharf this turn"
+            choices.append((self.wharf,Barrel()))
         if len(choices)==1:
             return choices[0]
         choice = ''
         while choice not in [str(i) for i in range(len(choices))]:
-            choice = self.get_input(game,"choice? ")
+            choice = self.get_input(game)
+        print choice
+        print len(choices)
+        print int(choice) == len(choices)
+        if self.use_building(Wharf) and not self.wharf.full() and int(choice) == len(choices)-1:
+            self.wharf.capacity = -1
         return choices[int(choice)]

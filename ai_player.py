@@ -14,3 +14,10 @@ class RandomPlayer(AIPlayer):
         n_roles = len(game.roles)
         role_idx = random.randint(0, n_roles-1) #todo: ensure only a valid (ie previously un-chosen) role is chosen
         return role_idx
+
+class TreeSearchPlayer(AIPlayer):
+    # Implements minimax Markov Tree Search
+    pass
+
+
+

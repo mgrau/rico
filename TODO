@@ -1,15 +1,10 @@
--warehouses
--rotting correctly
+-warehouses in human interface
 -heuristic colonist distribution function
--build interface in human_player should display discounted price
--implement prestige buildings
-
-
 
 -testing on a larger scale
 
 -better text interface
--Kivy interface
+-Pygame interface (kivy can die)
 
 -random AI incomplete
 -greedy AI

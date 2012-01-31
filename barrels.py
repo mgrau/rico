@@ -1,5 +1,5 @@
 class Barrel:
-    def __init__(self, cost=0, name=""):
+    def __init__(self, cost=-1, name=""):
         self.cost = cost
         self.name=name
     def __repr__(self):

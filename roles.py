@@ -153,9 +153,27 @@ class Captain(Role):
                 wharf.goods = []
                 wharf.capacity = 999
         for player in game.players[game.current_player:] + game.players[:game.current_player]:
+            print player.name
+            print len(player.goods)>1
             if len(player.goods) > 1:
+                storage = []
+                goods_to_keep = [Barrel()]
+                print goods_to_keep[0] not in player.goods
+                while goods_to_keep[0] not in player.goods:
+                    goods_to_keep = player.rot(game)
+                player.goods.remove(goods_to_keep[0])
+                storage.append(goods_to_keep[0])
+                if player.use_building(LargeWarehouse):
+                    for good in goods_to_keep[2:3]:
+                        while good in player.goods:
+                            player.goods.remove(good)
+                            storage.append(good)
+                if player.use_building(SmallWarehouse):
+                    while goods_to_keep[1] in player.goods:
+                        player.goods.remove(goods_to_keep[1])
+                        storage.append(good)
                 game.goods += player.goods
-                player.goods = []
+                player.goods = storage
         return
 
 

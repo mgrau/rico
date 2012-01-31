@@ -27,24 +27,31 @@ class Player:
 
 
     def choose_role(self,game):
-        return
+        return 0
 
     def settler(self,game):
-        return
+        return 0
 
     def mayor(self,game):
+        self.distribute_colonists()
         return
 
     def builder(self,game):
-        return
+        return -1
 
     def craftsman(self,game):
-        return
+        if len(self.goods):
+            return self.goods[0]
+        else:
+            return Barrel()
 
     def trader(self,game):
-        return
+        return Barrel()
 
     def captain(self,game):
+        return
+
+    def rot(self,game):
         return
 
     def discount(self,building=Building()):
@@ -95,14 +102,47 @@ class Player:
         colonists += reduce(lambda a,b: a+b.colonists,self.buildings,0)
         return colonists
 
+    def distribute_colonists(self):
+        for plantation in self.plantations:
+            if plantation.colonists<1 and self.san_juan>0:
+                plantation.colonists = 1
+                self.san_juan -= 1
+        for building in self.buildings:
+            if building.colonists < building.capacity and self.san_juan>0:
+                building.colonists += max(self.san_juan,building.capacity-building.colonists)
+                self.san_juan += max(self.san_juan,building.capacity-building.colonists)
+
     def open_plantations(self):
         return sum([(1-plantation.colonists) for plantation in self.plantations])
-
+    
     def open_buildings(self):
         return sum([(building.capacity-building.colonists) for building in self.buildings])
 
     def open_spots(self):
         return self.open_buildings() + self.open_plantations()
-
+    
     def total_points(self):
-        return self.points + sum([building.points for building in self.buildings]) # + prestige buildings
+        points = self.points # the victory point chips
+        points += sum([building.points for building in self.buildings]) # points for the buildings in the city
+
+        # now add points for any prestige buildings iff they have a colonist
+        if self.use_building(GuildHall):
+            for building_type in [SmallIndigoPlant, SmallSugarMill]:
+                if self.have_building(building_type):
+                    points += 1 # one point for the small production buildings
+            for building_type in [IndigoPlant, SugarMill, TobaccoStorage, CoffeeRoaster]:
+                if self.have_building(building_type):
+                    points += 2 # two points for the large production buildings
+        if self.use_building(Residence):
+            points += min(len(self.plantations)-5,4)
+        if self.use_building(Fortress):
+            points += int(self.colonists()/3) # 1 point for every 3 colonists
+        if self.use_building(CustomsHouse):
+            points += int(self.points/4) # 1 point for every 4 victory point chips
+        if self.use_building(CityHall):
+            for building in self.buildings:
+                # victory point for each violet building (large production buildings have non unity capacities)
+                if building.capacity==1 and not isinstance(building,SmallIndigoPlant) and not isinstance(building,SmallSugarMill):
+                    points += 1
+        return points
+

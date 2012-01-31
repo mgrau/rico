@@ -12,11 +12,11 @@ for player in game.players:
         player.goods.append(CornBarrel())
         player.goods.append(IndigoBarrel())
         player.goods.append(SugarBarrel())
+        player.goods.append(TobaccoBarrel())
         player.goods.append(CoffeeBarrel())
-    player.buildings.append(Wharf(1))
+#    player.buildings.append(Wharf(1))
 
-while not game.game_end():
-    game.round()
+game.start()
 
 for player in game.players:
     print player.name + ": "+str(player.points)+" points"

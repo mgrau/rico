@@ -93,7 +93,7 @@ class Human_Player(Player):
         already_printed = []
         for i,building in enumerate(game.buildings):
             if self.afford_building(building) and (not self.have_building(building.__class__)) and (building.__class__ not in already_printed):
-                print str(len(choices))+": "+building.name+"("+str(building.cost)+")"
+                print str(len(choices))+": "+building.name+"("+str(building.cost-self.discount(building))+")"
                 choices.append(i)
                 already_printed.append(building.__class__)
         print str(len(choices))+": don't buy a building"
@@ -160,9 +160,22 @@ class Human_Player(Player):
         choice = ''
         while choice not in [str(i) for i in range(len(choices))]:
             choice = self.get_input(game)
-        print choice
-        print len(choices)
-        print int(choice) == len(choices)
         if self.use_building(Wharf) and not self.wharf.full() and int(choice) == len(choices)-1:
             self.wharf.capacity = -1
         return choices[int(choice)]
+
+    def rot(self,game):
+        self.print_board(game)
+        print "\n"+self.name+", choose a good to keep"
+        choices = []
+        for good in self.goods:
+            if good not in choices:
+                print str(len(choices))+": "+str(good)
+                choices.append(good)
+        choice = ''
+        while choice not in [str(i) for i in range(len(choices))]:
+            choice = self.get_input(game)
+        goods_to_keep = [choices[int(choice)]]
+
+        # TODO: deal with warehouses
+        return goods_to_keep

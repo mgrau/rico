@@ -44,6 +44,11 @@ class Game:
             "ships: "+str(self.ships)+"\n"+\
             "players: "+str(self.players)
 
+    def start(self):
+        while not self.game_end():
+            self.round()
+
+
     def setup(self):
         for player in self.players:
             player.reset()
@@ -182,7 +187,10 @@ class Game:
 
     def can_player_ship(self,player):
         if len(player.goods):
-            for ship in self.ships+[player.wharf]:
+            ships = self.ships
+            if player.use_building(Wharf):
+                ships += [player.wharf]
+            for ship in ships:
                 if not ship.full():
                     if not(len(ship.goods)):
                         return True

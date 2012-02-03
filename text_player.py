@@ -1,7 +1,7 @@
 from player import *
 import code
 
-class Human_Player(Player):
+class Text_Player(Player):
     def print_board(self,game):
         print game
 

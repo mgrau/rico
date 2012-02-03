@@ -1,4 +1,4 @@
-class Ship():
+class Ship:
     def __init__(self,capacity=0):
         self.capacity = capacity
         self.goods = []

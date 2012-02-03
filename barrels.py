@@ -5,10 +5,7 @@ class Barrel:
     def __repr__(self):
         return self.name
     def __cmp__(self,other):
-        if isinstance(other,Barrel):
-            return cmp(self.cost,other.cost)
-        else:
-            return cmp(self.cost,other)
+        return cmp(self.cost,other.cost)
 
 
 class CornBarrel(Barrel):

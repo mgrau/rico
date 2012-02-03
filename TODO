@@ -1,10 +1,12 @@
 -warehouses in human interface
 -heuristic colonist distribution function
-
+-document code
 -testing on a larger scale
 
 -better text interface
--Pygame interface (kivy can die)
+-finish implementing pygame interface
+
+-preliminary android works
 
 -random AI incomplete
 -greedy AI

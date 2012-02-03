@@ -56,7 +56,7 @@ class Mayor(Role):
         for player in game.players[game.current_player:] + game.players[:game.current_player]:
             player.mayor(game)
             while player.san_juan > 0 and player.open_spots() and (not any([plantation.colonists > 1 for plantation in player.plantations]+[building.colonists > building.capacity for building in player.buildings])):
-                player.major(game)
+                player.mayor(game)
         game.fill_colonist_ship()
 
 
@@ -100,11 +100,13 @@ class Craftsman(Role):
                 elif unique_number in [2,3,4]:
                     player.coins += unique_number-1
             player.goods.extend(goods_obtained)
+            player.goods.sort()
         if len(game.players[game.current_player].goods)>0:
             good = game.players[game.current_player].craftsman(game)
             if good in game.players[game.current_player].goods and good in game.goods:
                 game.goods.remove(good)
                 game.players[game.current_player].goods.append(good)
+                game.players[game.current_player].goods.sort()
 
 
 class Trader(Role):
@@ -171,7 +173,7 @@ class Captain(Role):
                 if player.use_building(SmallWarehouse):
                     while goods_to_keep[1] in player.goods:
                         player.goods.remove(goods_to_keep[1])
-                        storage.append(good)
+                        storage.append(goods_to_keep[1])
                 game.goods += player.goods
                 player.goods = storage
         return

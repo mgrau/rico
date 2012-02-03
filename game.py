@@ -1,5 +1,4 @@
 from plantations import *
-from barrels import *
 from ships import *
 from roles import *
 from random import shuffle
@@ -181,13 +180,15 @@ class Game:
         self.buildings.append(Fortress())
         self.buildings.append(CustomsHouse())
         self.buildings.append(CityHall())
+        
+        self.buildings.sort()
 
     def can_anyone_ship(self):
         return any([self.can_player_ship(player) for player in self.players])
 
     def can_player_ship(self,player):
         if len(player.goods):
-            ships = self.ships
+            ships = list(self.ships)
             if player.use_building(Wharf):
                 ships += [player.wharf]
             for ship in ships:

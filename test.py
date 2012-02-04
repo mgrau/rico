@@ -2,10 +2,10 @@ import pygame
 pygame.init()
 screen = pygame.display.set_mode( (1024,768) )
 
-from text_player import *
 from gui_player import *
+from gui_game import *
 
-game = Game()
+game = GUI_Game()
 game.players.append(GUI_Player(0,"Matt",screen))
 game.players.append(GUI_Player(1,"Amy",screen))
 game.players.append(GUI_Player(2,"Dan",screen))
@@ -14,7 +14,7 @@ game.setup()
 from barrels import *
 from plantations import *
 from buildings import *
-for player in game.players:
+#for player in game.players:
 #    for i in range(3):
 #        player.goods.append(CornBarrel())
 #        player.goods.append(IndigoBarrel())
@@ -27,12 +27,7 @@ for player in game.players:
 #    player.buildings.append(CoffeeRoaster(1))
 #    player.buildings.append(SugarMill(1))
 #    player.buildings.append(SmallIndigoPlant(1))
-    player.coins = 100
-
-
-
-
-
+#    player.coins = 100
 game.start()
 
 for player in game.players:

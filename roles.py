@@ -114,13 +114,14 @@ class Trader(Role):
         Role.__init__(self,name="Trader")
     def __call__(self,game):
         for player in game.players[game.current_player:] + game.players[:game.current_player]:
-            good = player.trader(game)
-            if good in player.goods:
-                if len(game.trading_house)<4:
-                    if player.use_building(Office) or (good not in game.trading_house):
-                        player.goods.remove(good)
-                        game.trading_house.append(good)
-                        player.coins += good.cost + 1*player.use_building(SmallMarket) + 2*player.use_building(LargeMarket) + 1*(player.index == game.current_player)
+            if len(player.goods):
+                good = player.trader(game)
+                if good in player.goods:
+                    if len(game.trading_house)<4:
+                        if player.use_building(Office) or (good not in game.trading_house):
+                            player.goods.remove(good)
+                            game.trading_house.append(good)
+                            player.coins += good.cost + 1*player.use_building(SmallMarket) + 2*player.use_building(LargeMarket) + 1*(player.index == game.current_player)
         if len(game.trading_house)>=4:
             game.goods += game.trading_house
             game.trading_house = []

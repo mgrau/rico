@@ -1,0 +1,27 @@
+{% autoescape None %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Lobby</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        function update_lobby()
+        {
+            $.getJSON('lobby_update', function(data) {
+                $('#player_list').html(data.html);
+                update_lobby();
+            });
+        }
+        $(document).ready(update_lobby)
+    </script>
+</head>
+<body>
+<h2>Welcome, {{user_name}}</h2>
+<p><a href="/auth/logout">Log out</a></p>
+<p>Logged in players:</p>
+<div id='player_list'>
+    {{ player_list }}
+</div>
+</body>
+</html>

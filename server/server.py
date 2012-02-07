@@ -1,4 +1,5 @@
 from __future__ import division
+import os
 import tornado.ioloop
 import tornado.web
 from lobby import Lobby
@@ -16,9 +17,10 @@ class Application(tornado.web.Application):
             (r"/lobby_update", LobbyUpdateHandler),
             (r"/login_form", LoginFormHandler),
             (r"/auth/logout", AuthLogoutHandler),
-            (r"/new_chat", ChatHandler)
+            (r"/new_chat", ChatHandler),
         ]
-        tornado.web.Application.__init__(self, handlers)
+        static_dir = os.path.join(os.path.dirname(__file__), "static")
+        tornado.web.Application.__init__(self, handlers, static_path=static_dir)
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):

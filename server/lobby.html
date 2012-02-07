@@ -9,11 +9,20 @@
         function update_lobby()
         {
             $.getJSON('lobby_update', function(data) {
-                $('#player_list').html(data.html);
+                $('#player_list').html(data.userlist_html);
+                $('#chat_box').html(data.chat_html);
                 update_lobby();
             });
         }
-        $(document).ready(update_lobby)
+        $(document).ready(function() {
+            $('#chat_form').submit(function() {
+                var chat_msg = $(this).serialize();
+                $.post('/new_chat', chat_msg, function() {
+
+                });
+            });
+            update_lobby();
+        })
     </script>
 </head>
 <body>
@@ -23,5 +32,14 @@
 <div id='player_list'>
     {{ player_list }}
 </div>
+
+<h2>Chat</h2>
+<div id='chat_box'>
+
+</div>
+<form id="chat_form">
+    <input type='text' name='chat_msg'/>
+    <input type="submit" value="Send"/>
+</form>
 </body>
 </html>

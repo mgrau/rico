@@ -14,8 +14,9 @@ class Application(tornado.web.Application):
             (r"/", MainHandler),
             (r"/lobby", LobbyHandler),
             (r"/lobby_update", LobbyUpdateHandler),
-            (r"/login_form", LoginForm),
+            (r"/login_form", LoginFormHandler),
             (r"/auth/logout", AuthLogoutHandler),
+            (r"/new_chat", ChatHandler)
         ]
         tornado.web.Application.__init__(self, handlers)
 
@@ -36,19 +37,33 @@ class LobbyHandler(tornado.web.RequestHandler):
 class LobbyUpdateHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
-        tornado.ioloop.IOLoop.instance().add_timeout(datetime.timedelta(seconds=1), self.send_update)
+        tornado.ioloop.IOLoop.instance().add_timeout(datetime.timedelta(seconds=.1), self.send_update)
 
     def send_update(self):
         if self.request.connection.stream.closed(): #the client already disconnected
+            user = self.get_cookie('user_name')
+            lobby.remove_player(user)
             return
+
         msg = dict(
-            html=self.render_string("lobby_update.html", user_names=lobby.player_list))
+            userlist_html=self.render_string("lobby_update.html", user_names=lobby.player_list),
+            chat_html = self.render_string("chat_box.html", chat_msgs=lobby.chat_msgs)
+        )
         self.write(msg)
         self.finish()
 
-class LoginForm(tornado.web.RequestHandler):
+class LoginFormHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("login_form.html")
+
+class ChatHandler(tornado.web.RequestHandler):
+    def post(self):
+        # this is working in chrome but not safari
+        user_name = self.get_cookie('user_name')
+        msg = self.get_argument('chat_msg')
+        lobby.new_chat_msg(user_name, msg)
+        self.write('')
+
 
 class AuthLoginHandler(tornado.web.RequestHandler):
     def get(self):

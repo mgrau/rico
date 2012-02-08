@@ -25,14 +25,15 @@ class GUI_Player(Player):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        exit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pygame.mouse.get_rel()
-                if event.type == pygame.MOUSEBUTTONUP:
+                if event.type == pygame.MOUSEBUTTONUP or event.type == pygame.KEYDOWN:
                     rel = pygame.mouse.get_rel()
-                    if rel[0]<-10 and abs(rel[0])>abs(rel[1]) and not game_board:
+                    if not hasattr(event,'key'):
+                        event.key = -1
+                    if (rel[0]<-10 and abs(rel[0])>abs(rel[1]) or event.key == pygame.K_LEFT) and not game_board:
                         if visible_player == len(game.players)-1:
                             next_player = 0
                         else:
@@ -42,7 +43,7 @@ class GUI_Player(Player):
                             self.screen.blit(game.players[next_player].board.surface,(i,0))
                             pygame.display.flip()
                         visible_player = next_player
-                    if rel[0]>10 and abs(rel[0])>abs(rel[1]) and not game_board:
+                    if (rel[0]>10 and abs(rel[0])>abs(rel[1]) or event.key == pygame.K_RIGHT) and not game_board:
                         if visible_player == 0:
                             next_player = len(game.players)-1
                         else:
@@ -52,14 +53,14 @@ class GUI_Player(Player):
                             self.screen.blit(game.players[next_player].board.surface,(i-1024,0))
                             pygame.display.flip()
                         visible_player = next_player
-                    if abs(rel[1])>10 and abs(rel[1])>abs(rel[0]):
+                    if abs(rel[1])>10 and abs(rel[1])>abs(rel[0]) or event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                         if game_board:
                             nextscreen = game.players[visible_player].board.surface
                             thisscreen = game.surface
                         else:
                             nextscreen = game.surface
                             thisscreen = game.players[visible_player].board.surface
-                        if rel[1]>0:
+                        if rel[1]>0 or event.key == pygame.K_DOWN:
                             for i in range(0,768+1,96):
                                 self.screen.blit(thisscreen,(0,i))
                                 self.screen.blit(nextscreen,(0,i-768))
@@ -70,9 +71,9 @@ class GUI_Player(Player):
                                 self.screen.blit(thisscreen,(0,i-768))
                                 pygame.display.flip()
                         game_board = not game_board
-                if event.type == pygame.MOUSEBUTTONUP:
-                    if (visible_player == self.index and not game_board) or (build and game_board):
-                        return event.pos
+                    if event.type == pygame.MOUSEBUTTONUP and abs(rel[0])<10 and abs(rel[1])<10:
+                        if (visible_player == self.index and not game_board) or (build and game_board):
+                            return event.pos
             game.clock.tick(30)
 
 
@@ -153,7 +154,7 @@ class GUI_Player(Player):
         button = button.get_rect()
         button.topleft = (32,676)
         event = pygame.event.Event(pygame.KEYDOWN)
-        event.key = pygame.K_UP
+        event.key = pygame.K_DOWN
         pygame.event.post(event)
 
         valid_input = False

@@ -1324,9 +1324,9 @@ class GUI_Player(Player):
 def main():
     pygame.init()
     screen = pygame.display.set_mode( (1024,768) )
-    if android:
-        android.init()
-        android.map_key(android.KEYCODE_BACK, pygame.K_ESCAPE)
+#    if android:
+#        android.init()
+#        android.map_key(android.KEYCODE_BACK, pygame.K_ESCAPE)
 
     game = GUI_Game()
     game.players.append(GUI_Player(0,"Matt",screen))

@@ -101,7 +101,7 @@ class Craftsman(Role):
                     player.coins += unique_number-1
             player.goods.extend(goods_obtained)
             player.goods.sort()
-        if len(game.players[game.current_player].goods)>0:
+        if len(game.players[game.current_player].produce_goods()) and len(game.goods):
             good = game.players[game.current_player].craftsman(game)
             if good in game.players[game.current_player].goods and good in game.goods:
                 game.goods.remove(good)
@@ -154,7 +154,7 @@ class Captain(Role):
         for wharf in [player.wharf for player in game.players]:
                 game.goods += wharf.goods
                 wharf.goods = []
-                wharf.capacity = 999
+                wharf.passed = False
         for player in game.players[game.current_player:] + game.players[:game.current_player]:
             print player.name
             print len(player.goods)>1

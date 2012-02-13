@@ -161,7 +161,7 @@ class Text_Player(Player):
         while choice not in [str(i) for i in range(len(choices))]:
             choice = self.get_input(game)
         if self.use_building(Wharf) and not self.wharf.full() and int(choice) == len(choices)-1:
-            self.wharf.capacity = -1
+            self.wharf.passed = True
         return choices[int(choice)]
 
     def rot(self,game):

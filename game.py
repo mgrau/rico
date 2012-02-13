@@ -210,17 +210,31 @@ class Game:
 
     def round(self):
         # iterate through all players, beginning with the governor
-        for player in self.players[self.governor:]+self.players[:self.governor]:
-            self.current_player = player.index
+        if len(self.players)==2:
+            for i in range(3):
+                for player in self.players[self.governor:]+self.players[:self.governor]:
+                    self.current_player = player.index
 
-            # enforce that choice is valid
-            choice = -1
-            while choice not in range(len(self.roles)):
-                choice = player.choose_role(self)
-            player.role = self.roles.pop(int(choice)) #give player the role card
-            player.coins += player.role.coins # give player coins from role card
-            player.role.coins = 0 # remove coins from role
-            player.role(self) # execute actions associated with role
+                    # enforce that choice is valid
+                    choice = -1
+                    while choice not in range(len(self.roles)):
+                        choice = player.choose_role(self)
+                    player.roles.append(self.roles.pop(int(choice))) #give player the role card
+                    player.coins += player.roles[-1].coins # give player coins from role card
+                    player.roles[-1].coins = 0 # remove coins from role
+                    player.roles[-1](self)
+        else:
+            for player in self.players[self.governor:]+self.players[:self.governor]:
+                self.current_player = player.index
+
+                # enforce that choice is valid
+                choice = -1
+                while choice not in range(len(self.roles)):
+                    choice = player.choose_role(self)
+                player.roles.append(self.roles.pop(int(choice))) #give player the role card
+                player.coins += player.roles[-1].coins # give player coins from role card
+                player.roles[-1].coins = 0 # remove coins from role
+                player.roles[-1](self)
         # round is over, pass governor
         self.governor += 1
         if self.governor >= len(self.players):
@@ -230,8 +244,8 @@ class Game:
             role.coins += 1
         # get chosen roles back from players
         for player in self.players:
-            self.roles.append(player.role)
-            player.role = Role() # fill player.role with the superclass (sort of like null?)
+            self.roles.extend(player.roles)
+            player.roles = [] # fill player.role with the superclass (sort of like null?)
         self.roles.sort() # this is not strictly necessary, but matt likes to have them in order
         self.turn += 1 #increment turn
     

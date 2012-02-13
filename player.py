@@ -2,10 +2,10 @@ from game import *
 from ships import *
 
 class Player:
-    def __init__(self,index=0,name=""):
+    def __init__(self,index,name):
         self.name = name
         self.index = index
-        self.wharf = Ship(999)
+        self.wharf = WharfShip()
         self.reset()
 
     def __repr__(self):
@@ -23,7 +23,7 @@ class Player:
         self.plantations = []
         self.buildings = []
         self.san_juan = 0
-        self.role = Role()
+        self.roles = []
 
 
     def choose_role(self,game):

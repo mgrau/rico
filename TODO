@@ -1,13 +1,17 @@
--warehouses in human interface
+-warehouses in GUI
+-wharf in GUI
 -heuristic colonist distribution function
 -document code
 -testing on a larger scale
-
--better text interface
 -finish implementing pygame interface
 
--preliminary android works
+-more android testing
+-android package
+-GUI .exe and .app
 
 -random AI incomplete
 -greedy AI
 -better heuristic AI
+
+-javascript client
+-server

@@ -1,4 +1,4 @@
-from player import *
+from engine.player import *
 import code
 
 class Text_Player(Player):

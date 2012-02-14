@@ -1,11 +1,14 @@
 import pygame
-from plantations import *
-from roles import *
+
+import sys
+sys.path.append('..')
+from engine.plantations import *
+from engine.roles import *
 import tiles
 import fonts
 import textrect
 
-gray = pygame.Color(0,0,0,10)
+gray = pygame.Color(0,0,0,32)
 brown = pygame.Color(128,40,40)
 magenta = pygame.Color(255,180,100)
 
@@ -58,10 +61,11 @@ class Board():
 
         if player.san_juan:
             title = fonts.reg.render("San Juan",1,(0,0,0))
-            self.surface.blit(title,(507,132))
+            self.surface.blit(title,(537,157))
             san_juan = fonts.reg.render(str(player.san_juan),1,(255,255,255))
-            pygame.draw.circle(self.surface, brown, (500,125), 12)
-            self.surface.blit(san_juan,(496,115))
+            #pygame.draw.circle(self.surface, brown, (500,125), 12)
+            pygame.draw.circle(self.surface, brown, (530,150), 12)
+            self.surface.blit(san_juan,(526,140))
 
         for i,role in enumerate(player.roles):
             pos = (800-125-100*i,25)
@@ -87,17 +91,9 @@ class Board():
 
         for rect in self.plantation_grid:
             self.surface.blit(plantation_space,rect)
-#            pygame.draw.rect(self.surface,(127,127,127),pygame.Rect((rect[0]-6,rect[1]-6),(6,rect[3]+6)))
-#            pygame.draw.rect(self.surface,(127,127,127),pygame.Rect((rect[0],rect[1]-6),(rect[2]+6,6)))
-#            pygame.draw.rect(self.surface,(127,127,127),pygame.Rect((rect[0]+rect[2],rect[1]),(6,rect[3]+6)))
-#            pygame.draw.rect(self.surface,(127,127,127),pygame.Rect((rect[0]-6,rect[1]+rect[3]),(rect[2]+6,6)))
 
         for rect in self.building_grid:
             self.surface.blit(building_space,rect)
-#            pygame.draw.rect(self.surface,(127,127,127),pygame.Rect((rect[0]-5,rect[1]-5),(6,rect[3]+5)))
-#            pygame.draw.rect(self.surface,(127,127,127),pygame.Rect((rect[0],rect[1]-5),(rect[2]+5,5)))
-#            pygame.draw.rect(self.surface,(127,127,127),pygame.Rect((rect[0]+rect[2],rect[1]),(5,rect[3]+5)))
-#            pygame.draw.rect(self.surface,(127,127,127),pygame.Rect((rect[0]-5,rect[1]+rect[3]),(rect[2]+5,5)))
 
         for pos,plantation in zip(self.plantation_grid,player.plantations):
             self.draw_plantation(plantation,pos)
@@ -112,9 +108,33 @@ class Board():
                 self.surface.blit(amount,(pos[0]+15,pos[1]+12))
 
     def draw_points(self,player):
-        points = fonts.h1.render(str(player.points),1,(255,215,0))
-        self.surface.blit(points,(50,31))
+        if player.points_visible:
+            points = fonts.h1.render(str(player.points),1,(255,215,0))
+            self.surface.blit(points,(50,31))
+        else:
+            pygame.draw.circle(self.surface, (192,0,0), (64,60), 25)
 
+    def draw_wharf(self,player):
+        if player.use_building(Wharf):
+            pos = (300,520)
+            wharf = fonts.reg.render("Wharf",1,(0,0,0))
+            player.board.surface.blit(wharf,(300,500))
+            ship_space = pygame.Surface((40,40),pygame.SRCALPHA)
+            ship_space.fill(pygame.Color(0,0,0,32))
+            player.board.surface.blit(ship_space,pos)
+            if len(player.wharf.goods):
+                good = player.wharf.goods[0]
+                if good == CornBarrel():
+                    player.board.surface.blit(tiles.corn_barrel,pos)
+                elif good == IndigoBarrel():
+                    player.board.surface.blit(tiles.indigo_barrel,pos)
+                elif good == SugarBarrel():
+                    player.board.surface.blit(tiles.sugar_barrel,pos)
+                elif good == TobaccoBarrel():
+                    player.board.surface.blit(tiles.tobacco_barrel,pos)
+                elif good == CoffeeBarrel():
+                    player.board.surface.blit(tiles.coffee_barrel,pos)
+#            if not player.wharf.passed:
 
     def draw_roles(self,game):
         for pos,role in zip(self.role_grid,game.roles):
@@ -173,22 +193,29 @@ class Board():
         elif isinstance(building,CoffeeRoaster):
             self.surface.blit(tiles.coffee_roaster,pos)
         else:
-            if building.points < 4:
+            if building.size < 2:
                 self.surface.blit(tiles.small_violet,pos)
             else:
                 self.surface.blit(tiles.large_violet,pos)
             name = textrect.render_textrect(building.name,fonts.reg,pygame.Rect(0,0,95,55),(255,255,255))
             self.surface.blit(name,(pos[0]+5,pos[1]+2))
+
+            text = textrect.render_textrect(building.text,fonts.sm,pygame.Rect(0,0,95,155),(192,192,192))
+            self.surface.blit(text,(pos[0]+5,pos[1]+20))
+
         cost = fonts.reg.render(str(building.cost),1,(255,255,255))
         points = fonts.reg.render(str(building.points),1,(200,100,100))
         self.surface.blit(points,(pos[0]+105,pos[1]+1))
-        self.surface.blit(cost,(pos[0]+100,pos[1]+39))
-            
+        if building.size < 2:
+            self.surface.blit(cost,(pos[0]+100,pos[1]+39))
+        else:
+            self.surface.blit(cost,(pos[0]+96,pos[1]+110))
+
         if building.colonists > 0:
             if building.size < 2:
                 pygame.draw.circle(self.surface, brown, (pos[0]+103,pos[1]+48), 11)
             else:
-                pygame.draw.circle(self.surface, brown, (pos[0]+174,pos[1]+119), 11)
+                pygame.draw.circle(self.surface, brown, (pos[0]+103,pos[1]+118), 11)
         if building.colonists > 1:
             pygame.draw.circle(self.surface, brown, (pos[0]+73,pos[1]+48), 11)
         if building.colonists > 2:

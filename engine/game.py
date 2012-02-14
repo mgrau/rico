@@ -49,8 +49,9 @@ class Game:
 
 
     def setup(self):
-        for player in self.players:
+        for i,player in enumerate(self.players):
             player.reset()
+            player.index = i
         if len(self.players) not in range(2,5):
             print "wrong number of players"
             return
@@ -192,12 +193,10 @@ class Game:
             if player.use_building(Wharf):
                 ships += [player.wharf]
             for ship in ships:
-                if not ship.full():
-                    if not(len(ship.goods)):
+                for good in player.goods:
+                    if ship.can_load(good) and not any([good in othership.goods for othership in filter(lambda x:x!=ship,self.ships)]):
                         return True
-                    elif ship.goods[0] in player.goods:
-                        return True
-        return False
+            return False
 
     def ship(self,ship,player,good):
         if ship.can_load(good) and good in player.goods and player.use_building(Harbor):

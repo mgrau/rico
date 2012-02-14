@@ -57,8 +57,9 @@ class Player:
     def discount(self,building=Building()):
         discount = sum([plantation.colonists*isinstance(plantation,Quarry) for plantation in self.plantations])
         discount = min(discount,building.points) # you can't use more quarries than points the building is worth
-        if isinstance(self.role,Builder):
-            discount+=1
+        if len(self.roles):
+            if isinstance(self.roles[-1],Builder):
+                discount+=1
         return discount
 
     def afford_building(self,building=Building()):
@@ -98,8 +99,8 @@ class Player:
 
     def colonists(self):
         colonists = self.san_juan
-        colonists += reduce(lambda a,b: a+b.colonists,self.plantations,0)
-        colonists += reduce(lambda a,b: a+b.colonists,self.buildings,0)
+        colonists += sum([plantation.colonists for plantation in self.plantations])
+        colonists += sum([building.colonists for building in self.buildings])
         return colonists
 
     def distribute_colonists(self):
@@ -110,7 +111,7 @@ class Player:
         for building in self.buildings:
             if building.colonists < building.capacity and self.san_juan>0:
                 building.colonists += max(self.san_juan,building.capacity-building.colonists)
-                self.san_juan += max(self.san_juan,building.capacity-building.colonists)
+                self.san_juan -= max(self.san_juan,building.capacity-building.colonists)
 
     def open_plantations(self):
         return sum([(1-plantation.colonists) for plantation in self.plantations])
@@ -136,7 +137,7 @@ class Player:
         if self.use_building(Residence):
             points += min(len(self.plantations)-5,4)
         if self.use_building(Fortress):
-            points += int(self.colonists()/3) # 1 point for every 3 colonists
+            points += self.colonists()/3 # 1 point for every 3 colonists
         if self.use_building(CustomsHouse):
             points += int(self.points/4) # 1 point for every 4 victory point chips
         if self.use_building(CityHall):

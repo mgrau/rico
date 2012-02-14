@@ -1,4 +1,7 @@
-from game import Game
+import sys
+sys.path.append('..')
+
+from engine.game import Game
 from player_board import *
 import textrect
 import tiles
@@ -16,7 +19,7 @@ class GUI_Game(Game):
                 self.building_grid.append(pygame.Rect(25+(120+6)*column, 25+(65+6)*row,120,65))
         for column in range(4):
             self.trading_house_grid.append(pygame.Rect(column*45+575,520,40,40))
-        for column in range(4):
+        for column in range(3):
             self.ships_grid.append(pygame.Rect(400+column*45,520,40,40))
     def draw(self,index):
         for player in self.players:
@@ -62,6 +65,10 @@ class GUI_Game(Game):
                 self.surface.blit(tiles.large_violet,pos)
             name = textrect.render_textrect(building.name,fonts.reg,pygame.Rect(0,0,95,55),(255,255,255))
             self.surface.blit(name,(pos[0]+5,pos[1]+2))
+
+            text = textrect.render_textrect(building.text,fonts.sm,pygame.Rect(0,0,95,155),(192,192,192))
+            self.surface.blit(text,(pos[0]+5,pos[1]+20))
+
         cost = fonts.reg.render(str(building.cost),1,(255,255,255))
         points = fonts.reg.render(str(building.points),1,(200,100,100))
         self.surface.blit(points,(pos[0]+105,pos[1]+1))
@@ -84,7 +91,7 @@ class GUI_Game(Game):
         trading_house = fonts.reg.render("Trading House",1,(0,0,0))
         surface.blit(trading_house,(575,500))
         trading_space = pygame.Surface((40,40),pygame.SRCALPHA)
-        trading_space.fill(pygame.Color(0,0,0,10))
+        trading_space.fill(pygame.Color(0,0,0,32))
         for i,pos in enumerate(self.trading_house_grid):
             surface.blit(trading_space,pos)
             if i<len(self.trading_house):
@@ -106,8 +113,10 @@ class GUI_Game(Game):
         ships = fonts.reg.render("Ships",1,(0,0,0))
         surface.blit(ships,(400,500))
         ship_space = pygame.Surface((40,40),pygame.SRCALPHA)
-        ship_space.fill(pygame.Color(0,0,0,10))
+        ship_space.fill(pygame.Color(0,0,0,32))
+
         for pos,ship in zip(self.ships_grid,self.ships):
+            surface.blit(ship_space,pos)
             if len(ship.goods):
                 good = ship.goods[0]            
                 if good == CornBarrel():
@@ -120,6 +129,4 @@ class GUI_Game(Game):
                     surface.blit(tiles.tobacco_barrel,pos)
                 elif good == CoffeeBarrel():
                     surface.blit(tiles.coffee_barrel,pos)
-            else:
-                surface.blit(ship_space,pos)
             surface.blit(fonts.reg.render(str(ship.space()),1,(0,0,0)),(pos[0]+20,pos[1]+20))

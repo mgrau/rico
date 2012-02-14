@@ -1,12 +1,17 @@
-from player import *
+import sys
+
+sys.path.append('..')
+from engine.player import Player
+from engine.plantations import *
 from player_board import *
-from plantations import *
+
 
 class GUI_Player(Player):
     def __init__(self,index,name,screen):
         Player.__init__(self,index,name)
         self.screen = screen
         self.board = Board(screen.get_size())
+        self.points_visible = False
 
     def print_board(self,game):
         print game
@@ -27,10 +32,10 @@ class GUI_Player(Player):
         while not valid_input:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    exit()
+                    sys.exit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        exit()
+                        sys.exit()
                     elif event.key == pygame.K_LEFT and not game_board:
                         if visible_player == len(game.players)-1:
                             next_player = 0
@@ -113,10 +118,11 @@ class GUI_Player(Player):
                         game_board = not game_board
                     if event.type == pygame.MOUSEBUTTONUP and abs(rel[0])<swipe and abs(rel[1])<swipe:
                         if pygame.Rect(36,32,56,56).collidepoint(event.pos) and visible_player == self.index and not game_board:
+                            self.points_visible = not self.points_visible
                             self.board.draw_points(self)
                             self.screen.blit(self.board.surface,pygame.Rect(36,32,56,56),pygame.Rect(36,32,56,56))
                             pygame.display.update()
-                        else:
+                        elif (visible_player == self.index and not game_board) or game_board:
                             return event.pos
 
     def choose_role(self,game):
@@ -261,25 +267,39 @@ class GUI_Player(Player):
         game.draw(self.index)
         
         game.draw_ships(self.board.surface)
+        self.board.draw_wharf(self)
         instructions = fonts.reg.render("Please select a good to ship",1,(255,255,255))
-        self.board.surface.blit(instructions,(25,480))
+        self.board.surface.blit(instructions,(25,460))
         
         barrel_types = [CornBarrel(),IndigoBarrel(),SugarBarrel(),TobaccoBarrel(),CoffeeBarrel()]
 
         barrel = Barrel()
 
+        for player in game.players:
+            print player.wharf
+
+        if self.use_building(Wharf):
+            ships = game.ships+[self.wharf]
+            ships_grid = game.ships_grid + [pygame.Rect((300,520,40,40))]
+        else:
+            ships = game.ships
+            ships_grid = game.ships_grid
+
         valid_input = False
         while not valid_input:
             pos = self.get_input(game)
             for barrel,rect in zip(barrel_types,self.board.barrel_grid):
-                if rect.collidepoint(pos) and (barrel in self.goods) and any([ship.can_load(barrel) for ship in game.ships]):
+                if rect.collidepoint(pos) and (barrel in self.goods) and any([ship.can_load(barrel) for ship in ships]):
                     valid_input = True
                     break
-        
+
+        instructions = fonts.reg.render("Please select a ship to load",1,(255,255,255))
+        self.board.surface.blit(instructions,(25,480))
+
         valid_input = False
         while not valid_input:
             pos = self.get_input(game)
-            for ship,rect in zip(game.ships,game.ships_grid):
+            for ship,rect in zip(ships,ships_grid):
                 if rect.collidepoint(pos) and ship.can_load(barrel):
                     return ship,barrel
 

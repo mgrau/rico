@@ -76,7 +76,7 @@ def render_textrect(string, font, rect, text_color, justification=0):
                 surface.blit(tempsurface, (rect.width - tempsurface.get_width(), accumulated_height))
             else:
                 raise TextRectException, "Invalid justification argument: " + str(justification)
-        accumulated_height += font.size(line)[1]
+        accumulated_height += 0.75*font.size(line)[1]
 
     return surface
 

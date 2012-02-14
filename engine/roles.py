@@ -20,12 +20,12 @@ class Settler(Role):
                 if len(game.quarries)>0 and (player.index == game.current_player or player.use_building(ConstructionHut)):
                     choice = player.settler(game)
                     while choice not in range(len(game.plantations)+1):
-                        print "invalid choice"
+                        print "Settler: invalid choice"
                         choice = player.settler(game)
                 else:
                     choice = player.settler(game)
                     while choice not in range(len(game.plantations)):
-                        print "invalid choice"
+                        print "Settler: invalid choice"
                         choice = player.settler(game)
                 if choice == len(game.plantations):
                     player.plantations.append(game.quarries.pop())
@@ -68,7 +68,7 @@ class Builder(Role):
             if not(player.city_full()):
                 choice = player.builder(game)
                 while choice not in range(-1,len(game.buildings)):
-                    print "invalid choice"
+                    print "Builder: invalid choice"
                     choice = player.builder(game)
                 if choice >= 0:
                     if player.afford_building(game.buildings[choice]):
@@ -156,12 +156,9 @@ class Captain(Role):
                 wharf.goods = []
                 wharf.passed = False
         for player in game.players[game.current_player:] + game.players[:game.current_player]:
-            print player.name
-            print len(player.goods)>1
             if len(player.goods) > 1:
                 storage = []
                 goods_to_keep = [Barrel()]
-                print goods_to_keep[0] not in player.goods
                 while goods_to_keep[0] not in player.goods:
                     goods_to_keep = player.rot(game)
                 player.goods.remove(goods_to_keep[0])
@@ -171,7 +168,7 @@ class Captain(Role):
                         while good in player.goods:
                             player.goods.remove(good)
                             storage.append(good)
-                if player.use_building(SmallWarehouse):
+                if player.use_building(SmallWarehouse) and len(goods_to_keep)>1:
                     while goods_to_keep[1] in player.goods:
                         player.goods.remove(goods_to_keep[1])
                         storage.append(goods_to_keep[1])

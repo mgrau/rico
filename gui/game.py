@@ -36,7 +36,7 @@ class GUI_Game(Game):
         for player in self.players:
             if player.index == index:
                 player.board.draw(player,True)
-            else:
+            elif index>=0:
                 player.board.draw(player)
                 
         self.surface.blit(tiles.island, (0,0))
@@ -86,7 +86,7 @@ class GUI_Game(Game):
 
         points_supply = fonts.lg.render(str(max(0,self.points)),1,(255,215,0))
         self.surface.blit(tiles.points,(82,450))
-        self.surface.blit(points_supply,(89,457))
+        self.surface.blit(points_supply,(91,457))
         
     def draw_goods_supply(self):
         for pos,barrel,texture in zip(self.barrel_grid,[CornBarrel(),IndigoBarrel(),SugarBarrel(),TobaccoBarrel(),CoffeeBarrel()],tiles.barrels):

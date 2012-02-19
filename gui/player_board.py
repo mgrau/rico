@@ -44,6 +44,7 @@ class Board():
         for column in range(5):
             self.choose_barrel_grid.append(pygame.Rect(column*50+padding,520,40,40))
         self.points_rect = pygame.Rect(36,32,56,56)
+        self.invert_points_rect = pygame.Rect(800-56-36,600-56-32,56,56)
         self.notifications_rect = pygame.Rect(0,460,800,140)
         self.san_juan_rect = pygame.Rect(518,138, 24, 24)
         self.coins_rect = pygame.Rect(280,130, 40,40)
@@ -98,7 +99,7 @@ class Board():
             if player.points > 9:
                 self.surface.blit(points,(56,44))
             else:
-                self.surface.blit(points,(60,44))
+                self.surface.blit(points,(62,44))
         else:
             self.surface.blit(tiles.points,(50,40))
 

@@ -118,16 +118,18 @@ class GUI_Player(Player):
                                 pygame.display.update()
                         game_board = not game_board
                     elif event.type == pygame.MOUSEBUTTONUP and abs(rel[0])<swipe and abs(rel[1])<swipe:
+                        if self.invert:
+                            event.pos = (800-event.pos[0],600-event.pos[1])
                         if self.board.points_rect.collidepoint(event.pos) and visible_player == self.index and not game_board:
                             self.points_visible = not self.points_visible
                             self.board.draw_points(self)
-                            self.screen.blit(self.board.surface,self.board.points_rect,self.board.points_rect)
+                            if self.invert:
+                                self.screen.blit(pygame.transform.flip(self.board.surface,self.invert,self.invert),self.board.invert_points_rect,self.board.invert_points_rect)
+                            else:
+                                self.screen.blit(self.board.surface,self.board.points_rect,self.board.points_rect)
                             pygame.display.update(self.board.points_rect)
                         elif (visible_player == self.index and not game_board) or game_board:
-                            if self.invert:
-                                return (800-event.pos[0],600-event.pos[1])
-                            else:
-                                return event.pos
+                            return event.pos
 
     def choose_role(self,game):
         for player in game.players:
@@ -161,12 +163,18 @@ class GUI_Player(Player):
                     if self.use_building(Hacienda) and len(self.plantations)<12-1:
                         self.board.draw_plantation(game.plantation_deck[0],self.board.plantation_grid[len(self.plantations)+1])
                     if choice<len(game.plantations):
-                        self.board.draw_plantation(game.plantations[choice],self.board.plantation_grid[len(self.plantations)])
+                        plantation = game.plantations[choice]
+                        if self.use_building(Hospice):
+                            plantation.colonists = 1
+                        self.board.draw_plantation(plantation,self.board.plantation_grid[len(self.plantations)])
                         self.board.draw_current_player_marker(clear=True)
                         self.board.clear_notifications()
                         return choice
                     elif self.index==game.current_player or self.use_building(ConstructionHut):
-                        self.board.draw_plantation(Quarry(),self.board.plantation_grid[len(self.plantations)])
+                        if self.use_building(Hospice):
+                            self.board.draw_plantation(Quarry(1),self.board.plantation_grid[len(self.plantations)])
+                        else:
+                            self.board.draw_plantation(Quarry(0),self.board.plantation_grid[len(self.plantations)])
                         self.board.draw_current_player_marker(clear=True)
                         self.board.clear_notifications()
                         return choice

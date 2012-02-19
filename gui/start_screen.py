@@ -100,13 +100,14 @@ class Start_Screen():
                         self.screen.blit(self.name.surface,self.name.rect)
                         pygame.display.update(self.name_box)
                     elif event.key in [32]+range(48,58)+range(97,123):
-                        if shift and event.key in range(97,123):
-                            name += chr(event.key).capitalize()
-                        else:
-                            name += chr(event.key)
-                        self.name.surface = fonts.h1.render(name,1,(0,0,0),(255,255,255))
-                        self.screen.blit(self.name.surface,self.name.rect)
-                        pygame.display.update(self.name_box)
+                        if len(name)<=16:
+                            if shift and event.key in range(97,123):
+                                name += chr(event.key).capitalize()
+                            else:
+                                name += chr(event.key)
+                            self.name.surface = fonts.h1.render(name,1,(0,0,0),(255,255,255))
+                            self.screen.blit(self.name.surface,self.name_box,(0,0,self.name_box.width,self.name_box.height))
+                            pygame.display.update(self.name_box)
                     else:
                         print event.key
                 elif event.type == pygame.MOUSEBUTTONUP:
@@ -155,8 +156,12 @@ class Start_Screen():
     def draw_player_list(self):
         self.screen.blit(tiles.island,(50,100,300,500),(50,100,300,500))
         for i,player in enumerate(self.players):
+
             if player[1]:
                 self.screen.blit(fonts.h2.render(str(i+1)+") "+player[0]+" (AI)",1,(255,255,255)),(50,100+25*i))
             else:
-                self.screen.blit(fonts.h2.render(str(i+1)+") "+player[0],1,(255,255,255)),(50,100+25*i))
+                if player[2]:
+                    self.screen.blit(fonts.h2.render(str(i+1)+") "+player[0]+" (Invert)",1,(255,255,255)),(50,100+25*i))
+                else:
+                    self.screen.blit(fonts.h2.render(str(i+1)+") "+player[0],1,(255,255,255)),(50,100+25*i))
         pygame.display.update((50,100,300,500))

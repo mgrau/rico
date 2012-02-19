@@ -1,17 +1,25 @@
--warehouses in GUI
--wharf in GUI
--heuristic colonist distribution function
 -document code
 -testing on a larger scale
--finish implementing pygame interface
 
--more android testing
--android package
--GUI .exe and .app
+==engine==
+-better heuristic colonist distribution function
 
--random AI incomplete
+==GUI==
+-separate art board for building selection
+-build .exe
+-menu for rule select
+
+==android==
+resume
+vibrating (do I want to actually add this?)
+settings button map
+sign package for market release
+
+==AI==
+-obvious AI
 -greedy AI
--better heuristic AI
+-heuristic AI
 
+==Web==
 -javascript client
 -server

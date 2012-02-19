@@ -1,5 +1,6 @@
 from buildings import *
 from barrels import *
+from ships import *
 
 class Role:
     def __init__(self,name=""):
@@ -35,7 +36,7 @@ class Settler(Role):
                     player.plantations[-1].colonists = 1
                     game.colonists -= 1
             if len(player.plantations) < 12 and player.use_building(Hacienda):
-                player.plantations.append(game.plantation_deck.pop())
+                player.plantations.append(game.plantation_deck.pop(0))
         game.draw_plantations()
 
 
@@ -102,11 +103,16 @@ class Craftsman(Role):
             player.goods.extend(goods_obtained)
             player.goods.sort()
         if len(game.players[game.current_player].produce_goods()) and len(game.goods):
-            good = game.players[game.current_player].craftsman(game)
-            if good in game.players[game.current_player].goods and good in game.goods:
-                game.goods.remove(good)
-                game.players[game.current_player].goods.append(good)
-                game.players[game.current_player].goods.sort()
+            extra_good = False
+            for good in game.players[game.current_player].produce_goods():
+                if good in game.goods:
+                    extra_good = True
+            if extra_good:
+                good = game.players[game.current_player].craftsman(game)
+                if good in game.players[game.current_player].produce_goods() and good in game.goods:
+                    game.goods.remove(good)
+                    game.players[game.current_player].goods.append(good)
+                    game.players[game.current_player].goods.sort()
 
 
 class Trader(Role):
@@ -140,7 +146,7 @@ class Captain(Role):
             valid_shipping_order = False
             while not valid_shipping_order and game.can_player_ship(player):
                 (ship,good) = player.captain(game)
-                if good in player.goods and ship.can_load(good) and not any([good in othership.goods for othership in filter(lambda x:x!=ship,game.ships)]):
+                if good in player.goods and ship.can_load(good) and (not any([good in othership.goods for othership in filter(lambda x:x!=ship,game.ships)]) or isinstance(ship,WharfShip)):
                     if not(ship==player.wharf and not player.use_building(Wharf)):
                         valid_shipping_order = True
                         game.ship(ship,player,good)
@@ -164,7 +170,7 @@ class Captain(Role):
                 player.goods.remove(goods_to_keep[0])
                 storage.append(goods_to_keep[0])
                 if player.use_building(LargeWarehouse):
-                    for good in goods_to_keep[2:3]:
+                    for good in goods_to_keep[2:4]:
                         while good in player.goods:
                             player.goods.remove(good)
                             storage.append(good)

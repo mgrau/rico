@@ -31,58 +31,34 @@ class Board():
         self.role_grid = []
         for column in range(8):
             self.role_grid.append(pygame.Rect(10+column*100,490,90,100))
+        self.chosen_role_grid = []
+        for column in range(3):
+            self.chosen_role_grid.append(pygame.Rect(800-125-100*column,padding,90,100))
         self.choose_plantation_grid = []
         for column in range(8):
-            self.choose_plantation_grid.append(pygame.Rect(column*(75+padding)+padding,502,75,75))
+            self.choose_plantation_grid.append(pygame.Rect(column*(75+spacing)+padding,502,75,75))
         self.barrel_grid = []
         for column in range(5):
             self.barrel_grid.append(pygame.Rect(2*padding+2*spacing+3*75 +50*column,200,40,40))
         self.choose_barrel_grid = []
         for column in range(5):
             self.choose_barrel_grid.append(pygame.Rect(column*50+padding,520,40,40))
+        self.points_rect = pygame.Rect(36,32,56,56)
+        self.notifications_rect = pygame.Rect(0,460,800,140)
+        self.san_juan_rect = pygame.Rect(518,138, 24, 24)
+        self.coins_rect = pygame.Rect(280,130, 40,40)
         
     def draw(self,player,current_player=False):
         self.surface.blit(tiles.island, (0,0))
         name = fonts.h1.render(player.name,1,(255,255,255))
         self.surface.blit(name,(100,32))
 
+        self.draw_coins(player)
 
-        if current_player:
-            pygame.draw.circle(self.surface, (255,215,0), (64,60), 28)
-            pygame.draw.circle(self.surface, (192,0,0), (64,60), 25)
+        title = fonts.reg.render("San Juan",1,(0,0,0))
+        self.surface.blit(title,(517,163))
+        self.draw_san_juan(player)
 
-        coins = fonts.reg.render(str(player.coins),1,(0,0,0))
-        pygame.draw.circle(self.surface, (119,136,153), (300,150), 18)
-        if player.coins >= 5:
-            pygame.draw.circle(self.surface, (255,215,0), (300,150), 15)
-        else:
-            pygame.draw.circle(self.surface, (192,192,192), (300,150), 15)
-        self.surface.blit(coins, (296,140))
-
-        if player.san_juan:
-            title = fonts.reg.render("San Juan",1,(0,0,0))
-            self.surface.blit(title,(537,157))
-            san_juan = fonts.reg.render(str(player.san_juan),1,(255,255,255))
-            #pygame.draw.circle(self.surface, brown, (500,125), 12)
-            pygame.draw.circle(self.surface, brown, (530,150), 12)
-            self.surface.blit(san_juan,(526,140))
-
-        for i,role in enumerate(player.roles):
-            pos = (800-125-100*i,25)
-            if isinstance(role,Settler):
-                self.surface.blit(tiles.settler,pos)
-            elif isinstance(role,Mayor):
-                self.surface.blit(tiles.mayor,pos)
-            elif isinstance(role,Builder):
-                self.surface.blit(tiles.builder,pos)
-            elif isinstance(role,Craftsman):
-                self.surface.blit(tiles.craftsman,pos)
-            elif isinstance(role,Trader):
-                self.surface.blit(tiles.trader,pos)
-            elif isinstance(role,Captain):
-                self.surface.blit(tiles.captain,pos)
-            elif isinstance(role,Prospector):
-                self.surface.blit(tiles.prospector,pos)
 
         plantation_space = pygame.Surface((75,75),pygame.SRCALPHA)
         plantation_space.fill(gray)
@@ -101,24 +77,70 @@ class Board():
         for pos,building in zip(self.building_grid,player.buildings):
             self.draw_building(building,pos)
 
+        self.draw_goods(player)
+
+    def update(self,player):
+        self.draw_coins(player)
+        self.draw_goods(player)
+        self.draw_chosen_roles(player)
+        self.clear_notifications()
+
+
+    def draw_current_player_marker(self,clear=False):
+        if clear:
+            self.surface.blit(tiles.island,pygame.Rect(50,40,40,40),pygame.Rect(50,40,40,40))
+        else:
+            self.surface.blit(tiles.points,(50,40))
+
+    def draw_points(self,player):
+        if player.points_visible:
+            points = fonts.h2.render(str(player.points),1,(255,215,0))
+            if player.points > 9:
+                self.surface.blit(points,(56,44))
+            else:
+                self.surface.blit(points,(60,44))
+        else:
+            self.surface.blit(tiles.points,(50,40))
+
+    def draw_coins(self,player):
+        coins = fonts.reg.render(str(player.coins),1,(0,0,0))
+        self.surface.blit(tiles.island,(280,130,40,40),(280,130,40,40))
+        if player.coins >= 5:
+            self.surface.blit(tiles.gold,(280,130))
+        else:
+            self.surface.blit(tiles.silver,(280,130))
+        if player.coins > 9:
+            self.surface.blit(coins, (292,140))
+        else:
+            self.surface.blit(coins, (296,140))
+
+    def draw_goods(self,player):
         for pos,barrel,texture in zip(self.barrel_grid,[CornBarrel(),IndigoBarrel(),SugarBarrel(),TobaccoBarrel(),CoffeeBarrel()],tiles.barrels):
             if barrel in player.goods:
                 amount = fonts.reg.render(str(reduce(lambda a,b:a+(b==barrel),player.goods,0)),1,(255,255,255))
                 self.surface.blit(texture,pos)
-                self.surface.blit(amount,(pos[0]+15,pos[1]+12))
-
-    def draw_points(self,player):
-        if player.points_visible:
-            points = fonts.h1.render(str(player.points),1,(255,215,0))
-            self.surface.blit(points,(50,31))
+                pygame.draw.circle(self.surface, (96,96,96), pos.center, 10)
+                self.surface.blit(amount,(pos[0]+15,pos[1]+10))
+            else:
+                self.surface.blit(tiles.island,pos,pos)
+            
+    def clear_notifications(self):
+        self.surface.blit(tiles.island,self.notifications_rect,self.notifications_rect)
+        
+    def draw_san_juan(self,player):
+        if player.san_juan:
+            san_juan = fonts.reg.render(str(player.san_juan),1,(255,255,255))
+            pygame.draw.circle(self.surface, brown, self.san_juan_rect.center, 12)
+            self.surface.blit(san_juan,(self.san_juan_rect.center[0]-4,self.san_juan_rect.center[1]-10))
         else:
-            pygame.draw.circle(self.surface, (192,0,0), (64,60), 25)
+            self.surface.blit(tiles.island, self.san_juan_rect, self.san_juan_rect)
+        
 
     def draw_wharf(self,player):
-        if player.use_building(Wharf):
-            pos = (300,520)
+        if player.use_building(Wharf) and not player.wharf.passed:
+            pos = (500,480)
             wharf = fonts.reg.render("Wharf",1,(0,0,0))
-            player.board.surface.blit(wharf,(300,500))
+            player.board.surface.blit(wharf,(500,460))
             ship_space = pygame.Surface((40,40),pygame.SRCALPHA)
             ship_space.fill(pygame.Color(0,0,0,32))
             player.board.surface.blit(ship_space,pos)
@@ -134,23 +156,22 @@ class Board():
                     player.board.surface.blit(tiles.tobacco_barrel,pos)
                 elif good == CoffeeBarrel():
                     player.board.surface.blit(tiles.coffee_barrel,pos)
-#            if not player.wharf.passed:
 
-    def draw_roles(self,game):
+    def draw_role_selection(self,game):
         for pos,role in zip(self.role_grid,game.roles):
             if isinstance(role,Settler):
                 self.surface.blit(tiles.settler,pos)
-            if isinstance(role,Mayor):
+            elif isinstance(role,Mayor):
                 self.surface.blit(tiles.mayor,pos)
-            if isinstance(role,Builder):
+            elif isinstance(role,Builder):
                 self.surface.blit(tiles.builder,pos)
-            if isinstance(role,Craftsman):
+            elif isinstance(role,Craftsman):
                 self.surface.blit(tiles.craftsman,pos)
-            if isinstance(role,Trader):
+            elif isinstance(role,Trader):
                 self.surface.blit(tiles.trader,pos)
-            if isinstance(role,Captain):
+            elif isinstance(role,Captain):
                 self.surface.blit(tiles.captain,pos)
-            if isinstance(role,Prospector):
+            elif isinstance(role,Prospector):
                 self.surface.blit(tiles.prospector,pos)
 
             if role.coins:
@@ -162,6 +183,25 @@ class Board():
                 else:
                     pygame.draw.circle(self.surface, (192,192,192), pos, 15)
                 self.surface.blit(coins, (pos[0]-3,pos[1]-10))
+
+    def draw_chosen_roles(self,player):
+        for pos in self.chosen_role_grid:
+            self.surface.blit(tiles.island,pos,pos)
+        for pos,role in zip(self.chosen_role_grid,player.roles):
+            if isinstance(role,Settler):
+                self.surface.blit(tiles.settler,pos)
+            elif isinstance(role,Mayor):
+                self.surface.blit(tiles.mayor,pos)
+            elif isinstance(role,Builder):
+                self.surface.blit(tiles.builder,pos)
+            elif isinstance(role,Craftsman):
+                self.surface.blit(tiles.craftsman,pos)
+            elif isinstance(role,Trader):
+                self.surface.blit(tiles.trader,pos)
+            elif isinstance(role,Captain):
+                self.surface.blit(tiles.captain,pos)
+            elif isinstance(role,Prospector):
+                self.surface.blit(tiles.prospector,pos)
 
     def draw_plantation(self,plantation,pos):
         if isinstance(plantation,Corn):
@@ -200,7 +240,7 @@ class Board():
             name = textrect.render_textrect(building.name,fonts.reg,pygame.Rect(0,0,95,55),(255,255,255))
             self.surface.blit(name,(pos[0]+5,pos[1]+2))
 
-            text = textrect.render_textrect(building.text,fonts.sm,pygame.Rect(0,0,95,155),(192,192,192))
+            text = textrect.render_textrect(building.text,fonts.sm,pygame.Rect(0,0,90,155),(192,192,192))
             self.surface.blit(text,(pos[0]+5,pos[1]+20))
 
         cost = fonts.reg.render(str(building.cost),1,(255,255,255))

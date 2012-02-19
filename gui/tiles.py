@@ -6,6 +6,13 @@ barrels = []
 island = pygame.image.load('res/island.png')
 tiles.append(island)
 
+points = pygame.image.load('res/points.png')
+tiles.append(points)
+gold = pygame.image.load('res/gold_coin.png')
+tiles.append(gold)
+silver = pygame.image.load('res/silver_coin.png')
+tiles.append(silver)
+
 quarry = pygame.image.load('res/quarry.png')
 corn = pygame.image.load('res/corn.png')
 indigo = pygame.image.load('res/indigo.png')

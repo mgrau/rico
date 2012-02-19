@@ -35,8 +35,11 @@ for player in game.players:
     player.buildings.append(CoffeeRoaster(1))
     player.buildings.append(SugarMill(1))
     player.buildings.append(SmallIndigoPlant(1))
-    player.coins = 100
+    player.buildings.append(SmallWarehouse(1))
+    player.buildings.append(LargeWarehouse(1))
+    player.coins = 99
 game.players[0].buildings.append(Wharf(1))
+game.draw(0)
 game.start()
 
 for player in game.players:

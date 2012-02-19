@@ -1,0 +1,91 @@
+@font-face
+{
+    font-family: fertigo;
+    src: url('res/fertigo.ttf');
+}
+
+#island
+{
+    background-image: url('res/island.png');
+    width: 800;
+    height: 600;
+}
+
+#plantations
+{
+    position: absolute;
+    left: 25px;
+    top: 200px;
+}
+#buildings
+{
+    position: absolute;
+    left: 285;
+    top: 310px;
+}
+
+.plantation
+{
+    width: 75px;
+    height: 75px;
+    position: absolute;
+    background-color:rgba(0,0,0,0.1);
+}
+.corn
+{
+    background-image: url('res/corn.png');
+}
+.indigo
+{
+    background-image: url('res/indigo.png');
+}
+.sugar
+{
+    background-image: url('res/sugar.png');
+}
+.tobacco
+{
+    background-image: url('res/tobacco.png');
+}
+.coffee
+{
+    background-image: url('res/coffee.png');
+}
+.quarry
+{
+    background-image: url('res/quarry.png');
+}
+
+.circle
+{
+    display: block;
+    width: 22px;
+    height: 22px;
+    background: rgb(128,40,40);
+    -moz-border-radius: 11px;
+    -webkit-border-radius: 11px;
+    position: absolute
+}
+
+.building
+{
+    width: 120px;
+    height: 65px;
+    position: absolute;
+    background-color: rgba(0,0,0,0.1);
+}
+
+.building div
+{
+    font-family: fertigo;
+    color: white;
+    font-size: 10pt;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.small-market
+{
+    background-image: url('res/small_violet.png');
+}

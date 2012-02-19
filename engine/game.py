@@ -137,7 +137,7 @@ class Game:
             self.plantation_deck += self.plantation_discard
             self.plantation_discard = []
         for i in range(len(self.players)+1):
-            self.plantations.append(self.plantation_deck.pop())
+            self.plantations.append(self.plantation_deck.pop(0))
 
     def fill_colonist_ship(self):
         spots = 0

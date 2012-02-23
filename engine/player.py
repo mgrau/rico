@@ -104,14 +104,47 @@ class Player:
         return colonists
 
     def distribute_colonists(self):
-        for plantation in self.plantations:
-            if plantation.colonists<1 and self.san_juan>0:
-                plantation.colonists = 1
-                self.san_juan -= 1
-        for building in self.buildings:
-            if building.colonists < building.capacity and self.san_juan>0:
-                building.colonists += max(self.san_juan,building.capacity-building.colonists)
-                self.san_juan -= max(self.san_juan,building.capacity-building.colonists)
+        #Lower priority means it gets colonists first
+        priority_dict={"quarry":2,
+                       "corn":2,
+                       "indigo":7,
+                       "sugar":5,
+                       "tobacco":4,
+                       "coffee":4,
+                       "Small Indigo Plant":7,
+                       "Small Sugar Mill":5,
+                       "Small Market":2,
+                       "Hacienda":2,
+                       "Construction Hut":4,
+                       "Small Warehouse":2,
+                       "Indigo Plant":8,
+                       "Sugar Mill":6,
+                       "Hospice":3,
+                       "Office":3,
+                       "Large Market":1,
+                       "Large Warehouse":3,
+                       "Tobacco Storage":4,
+                       "Coffee Roaster":3,
+                       "University":3,
+                       "Factory":1,
+                       "Harbor":2,
+                       "Wharf":1,
+                       "Guild Hall":1,
+                       "Residence":1,
+                       "Fortress":1,
+                       "Customs House":1,
+                       "City Hall":1}
+        employers=self.buildings
+        employers.append(self.plantations)
+        priority_employer_tuples=[(priority_dict[x.name],x) for x in employers].sort()
+        for employer_tuple in priority_employer_tuples:
+            employer=employer_tuple[1]
+            capacity=1
+            if isinstance(employer,Building):
+                capacity=building.capacity
+            if employer.colonists < capacity and self.san_juan>0:
+                employer.colonists += max(self.san_juan,capacity-employer.colonists)
+                self.san_juan -= max(self.san_juan,capacity-employer.colonists)
 
     def open_plantations(self):
         return sum([(1-plantation.colonists) for plantation in self.plantations])

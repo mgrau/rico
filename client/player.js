@@ -8,7 +8,7 @@ $(document).ready(function() {
     $('#island').append('<div id="buildings"></div>');
     for (i=0;i<12;i++)
     {
-        $('#plantations').append('<div></div>');
+        $('#plantations').append('<div class="plantation"></div>');
     }
     $('#plantations > div').addClass("plantation");
     $('.plantation').each(function(index,plantation) {

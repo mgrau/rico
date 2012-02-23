@@ -21,9 +21,9 @@ def main():
 
     start_screen = Start_Screen(screen)
     start_screen.draw()
-#    players = start_screen.get_player()
+    players = start_screen.get_player()
 
-    players = [("Matt",False,False),("Dan",True,False)]
+    #players = [("Matt",False,False),("Dan",True,False)]
     game = GUI_Game(screen)
     for i,player in enumerate(players):
         name = player[0]
@@ -45,6 +45,9 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     valid_input = True
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        valid_input = True
 
 if __name__ == '__main__':
     main()

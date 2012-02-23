@@ -22,52 +22,51 @@ class Greedy_Player(Player):
     def distribute_colonists(self):
         for building in self.buildings:
             if building.colonists < building.capacity and self.san_juan>0 and isinstance(building,VioletBuilding):
-                building.colonists += max(self.san_juan,building.capacity-building.colonists)
-                self.san_juan -= max(self.san_juan,building.capacity-building.colonists)
+                diff = min(self.san_juan,building.capacity-building.colonists)
+                building.colonists += diff
+                self.san_juan -= diff
         for plantation in self.plantations:
             if plantation.colonists<1 and self.san_juan>0:
                 plantation.colonists = 1
                 self.san_juan -= 1
         for building in self.buildings:
             if building.colonists < building.capacity and self.san_juan>0 and isinstance(building,ProductionBuilding):
-                building.colonists += max(self.san_juan,building.capacity-building.colonists)
-                self.san_juan -= max(self.san_juan,building.capacity-building.colonists)
+                diff = min(self.san_juan,building.capacity-building.colonists)
+                building.colonists += diff
+                self.san_juan -= diff
     def choose_role(self, game):
         """
         Chooses a random role
         """
         roles = []
-        money_roles = []
-        for role in game.roles:
+        for i,role in enumerate(game.roles):
             if role.coins:
-                money_roles.append(role)
-
-        for i,role in enumerate(money_roles):
-            if isinstance(role,Settler):
-                if len(self.plantations)<12:
-                    roles.append(i)
-            if isinstance(role,Mayor):
-                if self.open_spots():
-                    roles.append(i)
-            if isinstance(role,Builder):
-                if True:
-                    roles.append(i)
-            if isinstance(role,Craftsman):
-                if True:
-                    roles.append(i)
-            if isinstance(role,Trader):
-                if self.can_trade(game):
-                    roles.append(i)
-            if isinstance(role,Captain):
-                if game.can_player_ship(self):
-                    roles.append(i)
-            if isinstance(role,Prospector):
-                if True:
-                    roles.append(i)
+                if isinstance(role,Settler):
+                    if len(self.plantations)<12:
+                        roles.append(i)
+                if isinstance(role,Mayor):
+                    if self.open_spots():
+                        roles.append(i)
+                if isinstance(role,Builder):
+                    if True:
+                        roles.append(i)
+                if isinstance(role,Craftsman):
+                    if True:
+                        roles.append(i)
+                if isinstance(role,Trader):
+                    if self.can_trade(game):
+                        roles.append(i)
+                if isinstance(role,Captain):
+                    if game.can_player_ship(self):
+                        roles.append(i)
+                if isinstance(role,Prospector):
+                    if True:
+                        roles.append(i)
         if len(roles):
             return random.choice(roles)
-        for i,role in enumerate(money_roles):
-            roles.append(i)
+        for i,role in enumerate(game.roles):
+            if role.coins:
+                roles.append(i)
         if len(roles):
             return random.choice(roles)
         for i,role in enumerate(game.roles):
@@ -103,7 +102,7 @@ class Greedy_Player(Player):
         """
         Choose a quarry if we can get one, otherwise, choose corn, or random
         """
-        if (self.index==game.current_player or self.use_building(ConstructionHut)) and len(game.quarries) and Quarry() not in self.plantations:
+        if (self.index==game.current_player or self.use_building(ConstructionHut)) and len(game.quarries) and not Quarry() in self.plantations:
             return len(game.plantations)
         for i,plantation in enumerate(game.plantations):
             if isinstance(plantation,Corn):

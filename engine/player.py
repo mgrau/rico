@@ -110,8 +110,9 @@ class Player:
                 self.san_juan -= 1
         for building in self.buildings:
             if building.colonists < building.capacity and self.san_juan>0:
-                building.colonists += max(self.san_juan,building.capacity-building.colonists)
-                self.san_juan -= max(self.san_juan,building.capacity-building.colonists)
+                diff = max(self.san_juan,building.capacity-building.colonists)
+                building.colonists += diff
+                self.san_juan -= diff
 
     def open_plantations(self):
         return sum([(1-plantation.colonists) for plantation in self.plantations])

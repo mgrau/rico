@@ -1,12 +1,16 @@
 import sys
 sys.path.append('..')
 
-from ai.greedy_player import *
-from player import GUI_Player
+from ai.greedy_player import Greedy_Player
+from player_board import Board
 
-class GUI_AI_Player(Greedy_Player,GUI_Player):
+
+class GUI_AI_Player(Greedy_Player):
     def __init__(self,index,name,screen):
-        GUI_Player.__init__(self,index,name,screen)
+        Greedy_Player.__init__(self,index,name)
+        self.screen = screen
+        self.board = Board(screen.get_size())
+        self.points_visible = False
     def choose_role(self,game):
         choice = Greedy_Player.choose_role(self,game)
         self.board.draw(self)

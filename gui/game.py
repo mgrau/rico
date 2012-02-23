@@ -35,7 +35,7 @@ class GUI_Game(Game):
     def draw(self,index):
         for player in self.players:
             if player.index == index:
-                player.board.draw(player,True)
+                player.board.draw(player)
             elif index>=0:
                 player.board.draw(player)
                 

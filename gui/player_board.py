@@ -49,7 +49,7 @@ class Board():
         self.san_juan_rect = pygame.Rect(518,138, 24, 24)
         self.coins_rect = pygame.Rect(280,130, 40,40)
         
-    def draw(self,player,current_player=False):
+    def draw(self,player):
         self.surface.blit(tiles.island, (0,0))
         name = fonts.h1.render(player.name,1,(255,255,255))
         self.surface.blit(name,(100,32))

@@ -1,0 +1,3 @@
+rm -rf build dist
+python setup.py py2app -r res,icon.ico --iconfile icon.ico -p pygame -O2
+

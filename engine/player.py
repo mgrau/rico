@@ -105,6 +105,7 @@ class Player:
 
     def distribute_colonists(self):
         #Lower priority means it gets colonists first
+        #think of "n" as "nth Priority" 
         priority_dict={"quarry":2,
                        "corn":2,
                        "indigo":7,
@@ -134,18 +135,19 @@ class Player:
                        "Fortress":1,
                        "Customs House":1,
                        "City Hall":1}
-        employers=self.buildings
-        employers.append(self.plantations)
-        priority_employer_tuples=[(priority_dict[x.name],x) for x in employers].sort()
+        employers=self.buildings+self.plantations
+        priority_employer_tuples=[(x,priority_dict[x.name]) for x in employers]
+        priority_employer_tuples.sort(key=lambda x: x[1])
         for employer_tuple in priority_employer_tuples:
-            employer=employer_tuple[1]
+            employer=employer_tuple[0]
             capacity=1
             if isinstance(employer,Building):
-                capacity=building.capacity
+                capacity=employer.capacity
             if employer.colonists < capacity and self.san_juan>0:
-                employer.colonists += max(self.san_juan,capacity-employer.colonists)
-                self.san_juan -= max(self.san_juan,capacity-employer.colonists)
-
+                diff=min(self.san_juan,capacity-employer.colonists)
+                employer.colonists += diff
+                self.san_juan -= diff
+    
     def open_plantations(self):
         return sum([(1-plantation.colonists) for plantation in self.plantations])
     

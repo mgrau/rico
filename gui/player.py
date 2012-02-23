@@ -1,4 +1,4 @@
-import sys
+import sys, code
 sys.path.append('..')
 from engine.player import Player
 from player_board import *
@@ -33,6 +33,8 @@ class GUI_Player(Player):
                     if event.key == pygame.K_ESCAPE:
                         game.gui_game_end = True
                         sys.exit()
+                    elif event.key == pygame.K_BACKQUOTE:
+                        code.interact(local=locals())
                     elif event.key == pygame.K_LEFT and not game_board:
                         if visible_player == len(game.players)-1:
                             next_player = 0
@@ -119,8 +121,10 @@ class GUI_Player(Player):
                         game_board = not game_board
                     elif event.type == pygame.MOUSEBUTTONUP and abs(rel[0])<swipe and abs(rel[1])<swipe:
                         if self.invert:
-                            event.pos = (800-event.pos[0],600-event.pos[1])
-                        if self.board.points_rect.collidepoint(event.pos) and visible_player == self.index and not game_board:
+                            pos = (800-event.pos[0],600-event.pos[1])
+                        else:
+                            pos = event.pos
+                        if self.board.points_rect.collidepoint(pos) and visible_player == self.index and not game_board:
                             self.points_visible = not self.points_visible
                             self.board.draw_points(self)
                             if self.invert:
@@ -129,7 +133,7 @@ class GUI_Player(Player):
                                 self.screen.blit(self.board.surface,self.board.points_rect,self.board.points_rect)
                             pygame.display.update(self.board.points_rect)
                         elif (visible_player == self.index and not game_board) or game_board:
-                            return event.pos
+                            return pos
 
     def choose_role(self,game):
         for player in game.players:

@@ -25,8 +25,8 @@ class Board():
                 self.plantation_grid.append(pygame.Rect((padding+(size[0]+spacing)*column, self.height*0.8-padding -size[1]-(size[1]+spacing)*row),size))
         size = (120,65)
         self.building_grid = []
-        for row in [2,1,0]:
-            for column in [0,1,2,3]:
+        for column in [0,1,2,3]:
+            for row in [2,1,0]: 
                 self.building_grid.append(pygame.Rect((2*padding + 2*spacing + 3*75+(size[0]+spacing)*column, self.height*0.8-padding -size[1]-(size[1]+spacing)*row),size))
         self.role_grid = []
         for column in range(8):

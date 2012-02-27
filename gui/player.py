@@ -1,4 +1,9 @@
-import sys, code
+try:
+    import android
+except ImportError:
+    android = None
+    import code
+import sys
 sys.path.append('..')
 from engine.player import Player
 from player_board import *
@@ -34,7 +39,8 @@ class GUI_Player(Player):
                         game.gui_game_end = True
                         sys.exit()
                     elif event.key == pygame.K_BACKQUOTE:
-                        code.interact(local=locals())
+                        if android is None:
+                            code.interact(local=locals())
                     elif event.key == pygame.K_LEFT and not game_board:
                         if visible_player == len(game.players)-1:
                             next_player = 0
@@ -269,9 +275,19 @@ class GUI_Player(Player):
             for id,rect in enumerate(game.building_grid):
                 if rect.collidepoint(pos):
                     for choice,building in enumerate(game.buildings):
-                        if building.id == id and self.afford_building(building) and (not self.have_building(building.__class__)):
+                        if building.id == id and self.afford_building(building) and (not self.have_building(building.__class__)) and (sum([b.size for b in self.buildings])+building.size<=12):
                             self.board.draw_current_player_marker(clear=True)
                             self.board.clear_notifications()
+                            if building.size > 1:
+                                if self.board.building_grid[len(self.buildings)].top<390:
+                                    self.board.building_grid[len(self.buildings)].union_ip(self.board.building_grid.pop(len(self.buildings)+1))
+                                else:
+                                    x = len(self.buildings)
+                                    self.board.building_grid[x+1].union_ip(self.board.building_grid.pop(x+2))
+                                    self.board.building_grid.append(self.board.building_grid.pop(x))
+#                                    self.board.building_grid[x],self.board.building_grid[x+1] = self.board.building_grid[x+1],self.board.building_grid[x]
+                            if self.use_building(University):
+                                building.colonists = 1
                             self.board.draw_building(building,self.board.building_grid[len(self.buildings)])
                             game.surface.blit(tiles.island,name,name)
                             game.surface.blit(tiles.island,button,button)

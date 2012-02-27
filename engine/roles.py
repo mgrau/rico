@@ -34,8 +34,8 @@ class Settler(Role):
                     player.plantations.append(game.plantations.pop(choice))
                 if player.use_building(Hospice) and game.colonists:
                     player.plantations[-1].colonists = 1
-                    game.colonists -= 1
-            if len(player.plantations) < 12 and player.use_building(Hacienda):
+                    game.colonists -= min(1,game.colonists)
+            if len(player.plantations) < 12 and player.use_building(Hacienda) and len(game.plantation_deck):
                 player.plantations.append(game.plantation_deck.pop(0))
         game.draw_plantations()
 
@@ -77,7 +77,7 @@ class Builder(Role):
                         player.coins -= (player.buildings[-1].cost-player.discount(player.buildings[-1]))
                         if player.use_building(University) and game.colonists:
                             player.buildings[-1].colonists = 1
-                            game.colonists -= 1
+                            game.colonists -= min(1,game.colonists)
 
 
 class Craftsman(Role):
